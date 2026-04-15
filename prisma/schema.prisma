@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AdminUser {
+  id       String        @id @default(uuid())
+  name     String
+  lname    String
+  email    String        @unique
+  password String?
+  role     AdminUserRole
+
+  createdAt DateTime @default(now())
+}
+
+enum AdminUserRole {
+  ADMIN
+  MANAGER
+  GUEST
+}
+
+model User {
+  id         String    @id @default(uuid())
+  name       String
+  lname      String
+  email      String    @unique
+  password   String?
+  location   String?
+  interests  String[]
+  languages  String[]
+  profession String?
+  dob        DateTime?
+  phoneNo    String?
+  gender     String?
+
+  dailyTimeSpent Int?
+  reasonToJoin   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  savedReels Reel[]     @relation("SavedReels")
+  adEvents   AdEvent[]
+  reelViews  ReelView[]
+}
+
+model Reel {
+  id          String   @id @default(uuid())
+  source      String
+  sourceUrl   String
+  reelUrl     String
+  duration    Int?
+  locations   String[]
+  languages   String[]
+  professions String[]
+
+  status ReelStatus
+
+  viewCount Int @default(0)
+  saveCount Int @default(0)
+
+  sourceViews Int? @default(0)
+  sourceLikee Int? @default(0)
+
+  createdAt DateTime @default(now())
+
+  savedBy   User[]     @relation("SavedReels")
+  reelViews ReelView[]
+}
+
+enum ReelStatus {
+  DRAFT
+  PUBLISH
+  REVIEW
+}
+
+model Ad {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+  url         String
+  redirectUrl String?
+  type        AdType
+
+  professions String[]
+  interests   String[]
+  gender      String?
+  ageMin      Int?
+  ageMax      Int?
+  locations   String[]
+
+  startAt DateTime
+  endAt   DateTime
+  status  AdStatus
+
+  viewCount  Int? @default(0) // impressions
+  clickCount Int? @default(0) // clicks
+
+  events AdEvent[] // 👈 relation added
+
+  createdAt DateTime @default(now())
+  // adEvents  AdEvent[]
+}
+
+enum AdType {
+  VIDEO
+  IMAGE
+}
+
+enum AdStatus {
+  ACTIVE
+  PAUSED
+  SCHEDULED
+  COMPLETED
+  CANCELED
+}
+
+model AdEvent {
+  id String @id @default(uuid())
+
+  adId   String
+  userId String?
+
+  eventType AdEventType
+
+  // user snapshot data (important for analytics even if user changes later)
+  location   String?
+  gender     String?
+  age        Int?
+  profession String?
+  interests  String[]
+  languages  String[]
+
+  device String? // ios / android / web
+  ip     String? // optional (for fraud detection)
+
+  createdAt DateTime @default(now())
+
+  // relations
+  ad   Ad    @relation(fields: [adId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([adId])
+  @@index([userId])
+  @@index([eventType])
+}
+
+enum AdEventType {
+  VIEW
+  CLICK
+}
+
+model ReelView {
+  id String @id @default(uuid())
+
+  userId String
+  reelId String
+
+  watchTime Int? // seconds watched (for ranking later)
+  completed Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reel Reel @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reelId]) // 🚀 prevents duplicate views
+  @@index([reelId])
+}

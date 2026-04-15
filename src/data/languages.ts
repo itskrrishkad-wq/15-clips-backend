@@ -1,0 +1,16 @@
+export const indianLanguages: string[] = [
+  "All",
+  "English",
+  "Assamese",
+  "Bengali",
+  "Gujarati",
+  "Hindi",
+  "Kannada",
+  "Malayalam",
+  "Marathi",
+  "Odia",
+  "Punjabi",
+  "Tamil",
+  "Telugu",
+  "Urdu",
+];
