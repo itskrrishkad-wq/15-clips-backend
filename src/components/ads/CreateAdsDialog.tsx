@@ -23,7 +23,7 @@ import { Loader2, PlusCircle, Upload } from "lucide-react";
 import { topCitiesInIndia } from "@/data/cities";
 import { Topprofessions } from "@/data/professions";
 import { Textarea } from "../ui/textarea";
-import { AdType } from "@/generated/prisma/enums";
+import { AdType } from "@/generated/prisma";
 
 const CreateAdsDialog = () => {
   const [file, setFile] = useState<File | null>(null);

@@ -22,7 +22,7 @@ import { MultiSelect } from "../MultiSelectComp";
 import { topCitiesInIndia } from "@/data/cities";
 import { indianLanguages } from "@/data/languages";
 import { Topprofessions } from "@/data/professions";
-import { ReelStatus } from "@/generated/prisma/enums";
+import { ReelStatus } from "@/generated/prisma";
 import { Reel } from "@/generated/prisma";
 
 type Props = {
