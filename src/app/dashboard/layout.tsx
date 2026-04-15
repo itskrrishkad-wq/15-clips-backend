@@ -1,16 +1,14 @@
-"use client"
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+"use client";
 import { AppSidebar } from "@/components/dashboard/layout/AppSidebar";
 import { TopNavbar } from "@/components/dashboard/layout/TopNavbar";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  title: string;
 }
 
-export default function DashboardLayout({ children, title }: DashboardLayoutProps) {
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -34,7 +32,7 @@ export default function DashboardLayout({ children, title }: DashboardLayoutProp
       </div>
 
       <div className="flex flex-1 flex-col bg-secondary overflow-hidden min-w-0">
-        <TopNavbar title={title} onMenuToggle={() => setSidebarOpen(true)} />
+        <TopNavbar onMenuToggle={() => setSidebarOpen(true)} />
         <main className="flex-1 overflow-auto p-4 sm:p-5 lg:p-7">
           {children}
         </main>

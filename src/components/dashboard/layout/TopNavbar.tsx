@@ -5,11 +5,11 @@ import { Bell, LogOutIcon, Menu, Search } from "lucide-react";
 import { useState } from "react";
 
 interface TopNavbarProps {
-  title: string;
+  // title: string;
   onMenuToggle?: () => void;
 }
 
-export function TopNavbar({ title, onMenuToggle }: TopNavbarProps) {
+export function TopNavbar({ onMenuToggle }: TopNavbarProps) {
   const [loggingout, setLoggingout] = useState(false);
 
   const handleLogOut = async () => {
@@ -46,9 +46,9 @@ export function TopNavbar({ title, onMenuToggle }: TopNavbarProps) {
         >
           <Menu className="h-5 w-5" />
         </Button>
-        <h1 className="text-base sm:text-lg font-semibold tracking-tight text-foreground truncate">
+        {/* <h1 className="text-base sm:text-lg font-semibold tracking-tight text-foreground truncate">
           {title}
-        </h1>
+        </h1> */}
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
