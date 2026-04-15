@@ -1,4 +1,4 @@
-import { Reel } from "@/generated/prisma/browser";
+import { Reel } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { downloadAndUpload } from "@/lib/yt-downloader";
 import { NextRequest, NextResponse } from "next/server";

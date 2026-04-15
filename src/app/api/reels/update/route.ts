@@ -1,4 +1,4 @@
-import { Reel } from "@/generated/prisma/browser";
+import { Reel } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { UTApi } from "uploadthing/server";
