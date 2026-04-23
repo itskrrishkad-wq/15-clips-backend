@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Reel" ADD COLUMN     "likeCount" INTEGER NOT NULL DEFAULT 0;
