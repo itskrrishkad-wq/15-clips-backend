@@ -1,9 +1,9 @@
-import { AdminUserRole } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
 import { JwtPayload } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 import { UTApi } from "uploadthing/server";
 import jwt from "jsonwebtoken";
+import { AdminUserRole } from "@/generated/prisma/enums";
 
 const utapi = new UTApi();
 

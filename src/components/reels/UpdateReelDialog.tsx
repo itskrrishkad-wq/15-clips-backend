@@ -22,9 +22,10 @@ import { MultiSelect } from "../MultiSelectComp";
 import { topCitiesInIndia } from "@/data/cities";
 import { indianLanguages } from "@/data/languages";
 import { Topprofessions } from "@/data/professions";
-import { ReelStatus } from "@/generated/prisma";
-import { Reel } from "@/generated/prisma";
+
 import { commonInterests } from "@/data/intrests";
+import { ReelStatus } from "@/generated/prisma/enums";
+import { Reel } from "@/generated/prisma/client";
 
 type Props = {
   open: boolean;

@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AdminUser, AdminUserRole } from "@/generated/prisma";
+import { AdminUser, AdminUserRole } from "@/generated/prisma/client";
 import { Shield, UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 

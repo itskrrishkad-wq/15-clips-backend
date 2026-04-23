@@ -4,7 +4,7 @@ import ReelCardPreview from "@/components/reels/ReelCard";
 import UpdateReelDialog from "@/components/reels/UpdateReelDialog";
 import UploadReelDialog from "@/components/reels/UploadReelDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Reel } from "@/generated/prisma";
+import { Reel } from "@/generated/prisma/client";
 import { Film } from "lucide-react";
 import { useEffect, useState } from "react";
 
