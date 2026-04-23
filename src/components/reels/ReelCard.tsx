@@ -1,6 +1,6 @@
-import { Reel } from "@/generated/prisma";
 import { BookmarkIcon, HeartIcon, PlayIcon } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { Reel } from "@/generated/prisma/client";
 
 const ReelCardPreview = ({ reel }: { reel: Reel }) => {
   return (

@@ -17,7 +17,6 @@ import {
 import { topCitiesInIndia } from "@/data/cities";
 import { indianLanguages } from "@/data/languages";
 import { Topprofessions } from "@/data/professions";
-import { ReelStatus } from "@/generated/prisma";
 import { Link2, Loader2, Upload } from "lucide-react";
 import { useState } from "react";
 import { MultiSelect } from "../MultiSelectComp";
@@ -25,6 +24,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { commonInterests } from "@/data/intrests";
+import { ReelStatus } from "@/generated/prisma/enums";
 
 const UploadReelDialog = () => {
   const [step, setStep] = useState(1);
