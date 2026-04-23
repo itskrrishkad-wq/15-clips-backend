@@ -24,6 +24,7 @@ import { MultiSelect } from "../MultiSelectComp";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { commonInterests } from "@/data/intrests";
 
 const UploadReelDialog = () => {
   const [step, setStep] = useState(1);
@@ -34,6 +35,7 @@ const UploadReelDialog = () => {
   const [videoUrl, setVideoUrl] = useState("");
 
   const [languages, setLanguages] = useState<string[]>([]);
+  const [interests, setInterests] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
   const [professions, setProfessions] = useState<string[]>([]);
 
@@ -43,17 +45,17 @@ const UploadReelDialog = () => {
 
   const [isUploading, setIsUploading] = useState(false);
 
-  const toggleValue = (
-    value: string,
-    list: string[],
-    setList: (val: string[]) => void,
-  ) => {
-    if (list.includes(value)) {
-      setList(list.filter((v) => v !== value));
-    } else {
-      setList([...list, value]);
-    }
-  };
+  // const toggleValue = (
+  //   value: string,
+  //   list: string[],
+  //   setList: (val: string[]) => void,
+  // ) => {
+  //   if (list.includes(value)) {
+  //     setList(list.filter((v) => v !== value));
+  //   } else {
+  //     setList([...list, value]);
+  //   }
+  // };
 
   const handleFileChange = (file: File | null) => {
     if (!file) return;
@@ -77,6 +79,7 @@ const UploadReelDialog = () => {
         languages: languages,
         locations: locations,
         professions: professions,
+        interests,
         source: source,
         sourceUrl: sourceUrl,
         status: status,
@@ -107,6 +110,7 @@ const UploadReelDialog = () => {
       setFile(null);
       setPreview(null);
       setLanguages([]);
+      setInterests([]);
       setLocations([]);
       setProfessions([]);
       setSource("");
@@ -309,6 +313,20 @@ const UploadReelDialog = () => {
                   selected={languages}
                   onChange={setLanguages}
                   placeholder="Select languages"
+                />
+              </div>
+
+              {/* Interests */}
+              <div>
+                <Label className="text-[12px]">Interests</Label>
+                <MultiSelect
+                  options={commonInterests.map((lang) => ({
+                    label: lang,
+                    value: lang.toLowerCase(),
+                  }))}
+                  selected={interests}
+                  onChange={setInterests}
+                  placeholder="Select interests"
                 />
               </div>
 

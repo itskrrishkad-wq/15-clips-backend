@@ -24,6 +24,7 @@ import { indianLanguages } from "@/data/languages";
 import { Topprofessions } from "@/data/professions";
 import { ReelStatus } from "@/generated/prisma";
 import { Reel } from "@/generated/prisma";
+import { commonInterests } from "@/data/intrests";
 
 type Props = {
   open: boolean;
@@ -37,6 +38,7 @@ const UpdateReelDialog = ({ open, onOpenChange, reel }: Props) => {
   const [videoUrl, setVideoUrl] = useState("");
 
   const [languages, setLanguages] = useState<string[]>([]);
+  const [interests, setInterests] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
   const [professions, setProfessions] = useState<string[]>([]);
 
@@ -53,6 +55,7 @@ const UpdateReelDialog = ({ open, onOpenChange, reel }: Props) => {
     setLanguages(reel.languages || []);
     setLocations(reel.locations || []);
     setProfessions(reel.professions || []);
+    setInterests(reel.interests || []);
     setSource(reel.source || "");
     setSourceUrl(reel.sourceUrl || "");
     setStatus(reel.status || "DRAFT");
@@ -89,6 +92,7 @@ const UpdateReelDialog = ({ open, onOpenChange, reel }: Props) => {
           languages,
           locations,
           professions,
+          interests,
           source,
           sourceUrl,
           status,
@@ -209,35 +213,58 @@ const UpdateReelDialog = ({ open, onOpenChange, reel }: Props) => {
           </Select>
 
           {/* MultiSelects */}
-          <MultiSelect
-            options={indianLanguages.map((l) => ({
-              label: l,
-              value: l.toLowerCase(),
-            }))}
-            selected={languages}
-            onChange={setLanguages}
-            placeholder="Languages"
-          />
+          <div>
+            <Label className="text-[12px]">Languages</Label>
+            <MultiSelect
+              options={indianLanguages.map((l) => ({
+                label: l,
+                value: l.toLowerCase(),
+              }))}
+              selected={languages}
+              onChange={setLanguages}
+              placeholder="Languages"
+            />
+          </div>
 
-          <MultiSelect
-            options={topCitiesInIndia.map((c) => ({
-              label: c,
-              value: c.toLowerCase(),
-            }))}
-            selected={locations}
-            onChange={setLocations}
-            placeholder="Locations"
-          />
+          {/* Interests */}
+          <div>
+            <Label className="text-[12px]">Interests</Label>
+            <MultiSelect
+              options={commonInterests.map((lang) => ({
+                label: lang,
+                value: lang.toLowerCase(),
+              }))}
+              selected={interests}
+              onChange={setInterests}
+              placeholder="Select interests"
+            />
+          </div>
 
-          <MultiSelect
-            options={Topprofessions.map((p) => ({
-              label: p,
-              value: p.toLowerCase(),
-            }))}
-            selected={professions}
-            onChange={setProfessions}
-            placeholder="Professions"
-          />
+          <div>
+            <Label className="text-[12px]">Locations</Label>
+            <MultiSelect
+              options={topCitiesInIndia.map((c) => ({
+                label: c,
+                value: c.toLowerCase(),
+              }))}
+              selected={locations}
+              onChange={setLocations}
+              placeholder="Locations"
+            />
+          </div>
+
+          <div>
+            <Label className="text-[12px]">Professions</Label>
+            <MultiSelect
+              options={Topprofessions.map((p) => ({
+                label: p,
+                value: p.toLowerCase(),
+              }))}
+              selected={professions}
+              onChange={setProfessions}
+              placeholder="Professions"
+            />
+          </div>
 
           {/* Actions */}
           <div className="flex justify-end">

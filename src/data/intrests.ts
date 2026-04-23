@@ -7,7 +7,7 @@ export const interests: string[] = [
   "Art",
 ];
 
-const commonInterests: string[] = [
+export const commonInterests: string[] = [
   "Technology",
   "Business",
   "Health",

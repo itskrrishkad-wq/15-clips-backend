@@ -31,8 +31,8 @@ enum AdminUserRole {
 
 model User {
   id         String    @id @default(uuid())
-  name       String
-  lname      String
+  name       String?
+  lname      String?
   email      String    @unique
   password   String?
   location   String?
@@ -43,6 +43,8 @@ model User {
   phoneNo    String?
   gender     String?
 
+  emailVerified Boolean @default(false)
+
   dailyTimeSpent Int?
   reasonToJoin   String?
 
@@ -52,6 +54,7 @@ model User {
   savedReels Reel[]     @relation("SavedReels")
   adEvents   AdEvent[]
   reelViews  ReelView[]
+  reelLikes  ReelLike[]
 }
 
 model Reel {
@@ -63,11 +66,13 @@ model Reel {
   locations   String[]
   languages   String[]
   professions String[]
+  interests   String[]
 
   status ReelStatus
 
   viewCount Int @default(0)
   saveCount Int @default(0)
+  likeCount Int @default(0)
 
   sourceViews Int? @default(0)
   sourceLikee Int? @default(0)
@@ -76,6 +81,7 @@ model Reel {
 
   savedBy   User[]     @relation("SavedReels")
   reelViews ReelView[]
+  reelLikes ReelLike[]
 }
 
 enum ReelStatus {
@@ -168,6 +174,29 @@ model ReelView {
 
   watchTime Int? // seconds watched (for ranking later)
   completed Boolean @default(false)
+  location  String?
+  gender    String?
+  age       Int?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reel Reel @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reelId]) // 🚀 prevents duplicate views
+  @@index([reelId])
+}
+
+model ReelLike {
+  id String @id @default(uuid())
+
+  userId String
+  reelId String
+
+  liked    Boolean @default(false)
+  location String?
+  gender   String?
+  age      Int?
 
   createdAt DateTime @default(now())
 

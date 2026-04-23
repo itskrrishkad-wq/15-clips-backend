@@ -158,15 +158,11 @@ export default function AdminsPage() {
   return (
     <>
       {/* HEADER */}
-      <div className="mb-4 sm:mb-6 flex justify-between items-center">
+      <div className="mb-4 sm:mb-6 flex flex-col justify-center items-start">
+        <h1 className="text-2xl font-semibold">Admins</h1>
         <p className="text-[12px] text-muted-foreground">
           Manage admin users and their roles & permissions
         </p>
-
-        <Button className="gap-2 rounded-xl">
-          <UserPlus className="h-4 w-4" />
-          Add Admin
-        </Button>
       </div>
 
       {/* ROLE STATS */}

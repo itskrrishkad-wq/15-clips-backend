@@ -18,3 +18,8 @@ export async function decodeCustomJWT(token: string) {
     return null;
   }
 }
+
+export function generateOTP(): string {
+  // ensures 6 digits, including leading zeros
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}

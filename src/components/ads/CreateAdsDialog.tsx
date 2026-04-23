@@ -198,7 +198,7 @@ const CreateAdsDialog = () => {
 
           {/* URL */}
           <div>
-            <Label className="text-[12px]">Target URL</Label>
+            <Label className="text-[12px]">Redirect URL</Label>
             <Input
               className="mt-1.5 rounded-xl"
               value={url}

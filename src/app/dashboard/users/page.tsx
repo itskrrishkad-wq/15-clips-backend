@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { users } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
@@ -80,10 +80,6 @@ export default function UsersPage() {
             className="h-10 w-full sm:w-72 rounded-xl pl-10 bg-secondary/60 border-border/50 text-[13px] focus:bg-card focus:shadow-soft transition-all"
           />
         </div>
-        <Button className="gap-2 rounded-xl gradient-primary border-0 shadow-glow h-10 text-[13px] w-full sm:w-auto">
-          <UserPlus className="h-4 w-4" />
-          Add User
-        </Button>
       </div>
 
       {/* Mobile cards */}
