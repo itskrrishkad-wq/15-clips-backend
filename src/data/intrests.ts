@@ -1,14 +1,7 @@
-export const interests: string[] = [
-  "Sports",
-  "Music",
-  "Travel",
-  "Technology",
-  "Reading",
-  "Art",
-];
-
 export const commonInterests: string[] = [
+  "Political",
   "Technology",
+  "Geopolitics",
   "Business",
   "Health",
   "Finance",
@@ -19,4 +12,5 @@ export const commonInterests: string[] = [
   "Food",
   "Movies",
   "Gaming",
+  "Crime",
 ];

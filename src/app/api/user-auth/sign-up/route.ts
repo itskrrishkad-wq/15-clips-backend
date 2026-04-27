@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
   <div class="container">
     <h2>Verify Your Account</h2>
 
-    <p>Hello${email},</p>
+    <p>Hello ${email},</p>
 
     <p>
       Thank you for signing up. Please use the verification code below to

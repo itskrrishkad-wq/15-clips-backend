@@ -1,17 +1,6 @@
+import { commonInterests } from "@/data/intrests";
 import { searchShorts } from "@/lib/fetch_shorts";
 import { NextRequest, NextResponse } from "next/server";
-
-const commonInterests: string[] = [
-  // "Technology",
-  // "Business",
-  "Health",
-  // "Finance",
-  // "Music",
-  // "Sports",
-  // "Travel",
-  // "Food",
-  "Movies",
-];
 
 export const indianLanguages: string[] = ["English", "Marathi"];
 
@@ -29,13 +18,7 @@ function isRelevant(title: string, interest: string) {
 
 // 🔥 fallback query generator
 function generateQueries(lang: string, interest: string) {
-  return [
-    `${lang} ${interest} news`,
-    `${lang} ${interest}`,
-    `${interest} news India`,
-    `${interest} trending India`,
-    `${interest} latest`,
-  ];
+  return [`${lang} ${interest} news`];
 }
 
 export async function GET(req: NextRequest) {
@@ -44,7 +27,7 @@ export async function GET(req: NextRequest) {
     const globalSeen = new Set<string>();
 
     for (const lang of indianLanguages) {
-      for (const interest of commonInterests) {
+      for (const interest of commonInterests.slice(0, 2)) {
         const key = `${lang}_${interest}`;
         const queries = generateQueries(lang, interest);
 
@@ -55,11 +38,17 @@ export async function GET(req: NextRequest) {
 
           const shorts = await searchShorts({
             query,
-            maxResults: 25,
+            maxResults: 4,
             publishedAfterDays: 5,
           });
 
-          const filtered = shorts
+          const update_shorts = shorts.map((short) => ({
+            ...short,
+            languages: [lang],
+            interests: [interest],
+          }));
+
+          const filtered = update_shorts
             .filter((s: any) => isRelevant(s.title, interest))
             .map((s: any) => ({
               ...s,

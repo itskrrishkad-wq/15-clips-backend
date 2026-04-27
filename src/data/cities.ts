@@ -1,6 +1,5 @@
 export const topCitiesInIndia: string[] = [
   "All",
-
   "Mumbai",
   "Delhi",
   "Bangalore",
