@@ -3,16 +3,41 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const id = req.nextUrl.searchParams.get("id");
-    const uid = req.nextUrl.searchParams.get("uid");
+    const { id, uid, watchTime, completed } = await req.json();
 
     if (!id || !uid) {
-      console.log({ id, uid });
       return NextResponse.json({ success: false, message: "missing id's" });
     }
 
+    const user = await prisma.user.findFirst({ where: { id: uid } });
+
+    if (!user) {
+      return NextResponse.json({
+        success: false,
+        message: "no user found",
+      });
+    }
+
+    const reel_view_exists = await prisma.reelView.findFirst({
+      where: { reelId: id, userId: uid },
+    });
+
+    if (!reel_view_exists) {
+      return NextResponse.json({
+        success: false,
+        message: "reel view exists",
+      });
+    }
+
     const reel_view = await prisma.reelView.create({
-      data: { reelId: id, userId: uid },
+      data: {
+        reelId: id,
+        userId: uid,
+        watchTime,
+        completed,
+        gender: user.gender,
+        location: user.location,
+      },
     });
 
     if (!reel_view) {

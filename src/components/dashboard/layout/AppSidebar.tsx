@@ -2,8 +2,10 @@
 import { cn } from "@/lib/utils";
 import {
   Film,
+  FolderPlusIcon,
   LayoutDashboard,
   Megaphone,
+  MessageCircleWarning,
   Settings,
   ShieldCheck,
   Users,
@@ -17,6 +19,8 @@ const mainNav = [
   { title: "Reels", href: "/dashboard/reels", icon: Film },
   { title: "Ads", href: "/dashboard/ads", icon: Megaphone },
   { title: "Users", href: "/dashboard/users", icon: Users },
+  { title: "Reports", href: "/dashboard/reports", icon: MessageCircleWarning },
+  { title: "Sources", href: "/dashboard/sources", icon: FolderPlusIcon },
   { title: "Admins", href: "/dashboard/admins", icon: ShieldCheck },
 ];
 

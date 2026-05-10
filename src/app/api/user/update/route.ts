@@ -9,17 +9,13 @@ interface CustomJWTPayload extends JwtPayload {
 export async function PUT(req: NextRequest) {
   try {
     const {
-      profession,
-      interests,
-      preference,
-      languages,
-      firstName,
-      lastName,
-      phone,
-      dob,
-      location,
+      name,
+      lname,
       gender,
-      dailyTime,
+      location,
+      profession,
+      email,
+      interests,
       accessToken,
     } = await req.json();
 
@@ -40,17 +36,13 @@ export async function PUT(req: NextRequest) {
     }
 
     console.log({
-      profession,
-      interests,
-      preference,
-      languages,
-      firstName,
-      lastName,
-      phone,
-      dob,
-      location,
+      name,
+      lname,
       gender,
-      dailyTime,
+      location,
+      profession,
+      email,
+      interests,
       accessToken,
     });
 
@@ -62,15 +54,12 @@ export async function PUT(req: NextRequest) {
     if (
       !profession ||
       interests.length <= 0 ||
-      languages.length <= 0 ||
-      !preference ||
-      !firstName ||
-      !lastName ||
-      !phone ||
-      !dob ||
+      !name ||
+      !lname ||
       !location ||
       !gender ||
-      !dailyTime
+      !email ||
+      !accessToken
     ) {
       return NextResponse.json(
         {
@@ -85,15 +74,11 @@ export async function PUT(req: NextRequest) {
       where: { id: user.id },
       data: {
         profession,
-        languages: [languages],
         interests,
-        name: firstName,
-        lname: lastName,
-        phoneNo: phone,
-        dob: new Date(dob),
+        name,
+        lname,
         location,
         gender,
-        dailyTimeSpent: parseInt(dailyTime),
       },
     });
 
@@ -112,7 +97,7 @@ export async function PUT(req: NextRequest) {
       user: safeUser,
     });
   } catch (error) {
-    console.log("error while updating user: ", error)
+    console.log("error while updating user: ", error);
     return NextResponse.json(
       {
         success: false,

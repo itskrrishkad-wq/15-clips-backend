@@ -12,31 +12,20 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const reels = await prisma.reel.findMany({ where: { status: "PUBLISH" } });
+    const ads = await prisma.ad.findMany({ where: { status: "ACTIVE" } });
 
-    const views = await prisma.reelView.findMany();
-
-    const new_reels = reels.filter((reel) =>
-      views.some((view) => view.reelId !== reel.id),
-    );
-
-    console.log({ new_reels });
-
-    if (reels.length <= 0) {
+    if (!ads || ads.length <= 0) {
       return NextResponse.json({
         success: false,
-        message: "no reels available",
+        message: "no active ads",
         data: [],
       });
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "ok",
-      data: reels,
-    });
+    console.log({ ads });
+    return NextResponse.json({ success: true, message: "ok", data: ads });
   } catch (error) {
-    console.error("error while getting feed: ", error);
+    console.log("error while getting ads: ", error);
     return NextResponse.json({
       success: false,
       message: "Internal server error",

@@ -52,22 +52,28 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  savedReels Reel[]     @relation("SavedReels")
+  savedReels Reel[]      @relation("SavedReels")
   adEvents   AdEvent[]
   reelViews  ReelView[]
   reelLikes  ReelLike[]
+  reelSaveds ReelSaved[]
+  reports    Report[]
 }
 
 model Reel {
-  id          String   @id @default(uuid())
-  source      String
-  sourceUrl   String
-  reelUrl     String
-  duration    Int?
-  locations   String[]
-  languages   String[]
-  professions String[]
-  interests   String[]
+  id              String   @id @default(uuid())
+  source          String
+  sourceUrl       String
+  sourceThumbnail String?
+  reelUrl         String
+  duration        Int?
+  channel         String?
+  channelId       String?
+  thumbnail       String?
+  locations       String[]
+  languages       String[]
+  professions     String[]
+  interests       String[]
 
   status ReelStatus
 
@@ -80,9 +86,11 @@ model Reel {
 
   createdAt DateTime @default(now())
 
-  savedBy   User[]     @relation("SavedReels")
-  reelViews ReelView[]
-  reelLikes ReelLike[]
+  savedBy    User[]      @relation("SavedReels")
+  reelViews  ReelView[]
+  reelLikes  ReelLike[]
+  reelSaveds ReelSaved[]
+  reports    Report[]
 }
 
 enum ReelStatus {
@@ -91,13 +99,72 @@ enum ReelStatus {
   REVIEW
 }
 
+model ReelView {
+  id String @id @default(uuid())
+
+  userId String
+  reelId String
+
+  watchTime Int? // seconds watched (for ranking later) || percentage
+  completed Boolean @default(false)
+  location  String?
+  gender    String?
+  age       Int?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reel Reel @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reelId]) // 🚀 prevents duplicate views
+  @@index([reelId])
+}
+
+model ReelLike {
+  id String @id @default(uuid())
+
+  userId String
+  reelId String
+
+  liked    Boolean @default(false)
+  location String?
+  gender   String?
+  age      Int?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reel Reel @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reelId]) // 🚀 prevents duplicate views
+  @@index([reelId])
+}
+
+model ReelSaved {
+  id String @id @default(uuid())
+
+  userId String
+  reelId String
+
+  Saved Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reel Reel @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reelId]) // 🚀 prevents duplicate views
+  @@index([reelId])
+}
+
 model Ad {
-  id          String  @id @default(uuid())
-  title       String
-  description String?
-  url         String
-  redirectUrl String?
-  type        AdType
+  id               String  @id @default(uuid())
+  title            String
+  description      String?
+  url              String
+  redirectUrl      String?
+  actionButtonText String?
+  type             AdType
 
   professions String[]
   interests   String[]
@@ -167,43 +234,61 @@ enum AdEventType {
   CLICK
 }
 
-model ReelView {
+model Report {
   id String @id @default(uuid())
 
+  // who reported
   userId String
-  reelId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  watchTime Int? // seconds watched (for ranking later)
-  completed Boolean @default(false)
-  location  String?
-  gender    String?
-  age       Int?
+  // which reel
+  reelId String
+  reel   Reel   @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  // why
+  reason ReportReason
+  note   String?      @db.Text
+
+  // optional (can remove if you want ultra-minimal)
+  status ReportStatus @default(PENDING)
 
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reel Reel @relation(fields: [reelId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, reelId]) // 🚀 prevents duplicate views
-  @@index([reelId])
+  // prevent spam reporting same reel
+  @@unique([userId, reelId])
 }
 
-model ReelLike {
-  id String @id @default(uuid())
+enum ReportReason {
+  SPAM
+  INAPPROPRIATE
+  VIOLENCE
+  COPYRIGHT
+  OTHER
+}
 
-  userId String
-  reelId String
+enum ReportStatus {
+  PENDING
+  RESOLVED
+}
 
-  liked    Boolean @default(false)
-  location String?
-  gender   String?
-  age      Int?
+model AdSettings {
+  id                      String @id @default(uuid())
+  numberOfReelsBetweenAds Int // Ads appear after this many reels
+}
 
-  createdAt DateTime @default(now())
+model Source {
+  id          String      @id @default(uuid())
+  channelId   String      @unique
+  categories  String[]
+  language    String
+  channelName String
+  profileImg  String?
+  source      SourceValue
+  createdAt   DateTime    @default(now())
+  updateAt    DateTime    @updatedAt()
+}
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reel Reel @relation(fields: [reelId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, reelId]) // 🚀 prevents duplicate views
-  @@index([reelId])
+enum SourceValue {
+  YOUTUBE
+  INSTAGRAM
 }
