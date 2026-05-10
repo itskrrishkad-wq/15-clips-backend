@@ -58,7 +58,6 @@ export async function PUT(req: NextRequest) {
       !lname ||
       !location ||
       !gender ||
-      !email ||
       !accessToken
     ) {
       return NextResponse.json(
