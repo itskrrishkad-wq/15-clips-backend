@@ -307,8 +307,8 @@ const UploadReelDialog = () => {
                 <Label className="text-[12px]">Languages</Label>
                 <MultiSelect
                   options={indianLanguages.map((lang) => ({
-                    label: lang,
-                    value: lang.toLowerCase(),
+                    label: lang.label,
+                    value: lang.value.toLowerCase(),
                   }))}
                   selected={languages}
                   onChange={setLanguages}

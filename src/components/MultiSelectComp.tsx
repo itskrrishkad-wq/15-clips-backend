@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -59,32 +59,38 @@ export function MultiSelect({
   const MAX_VISIBLE = 3;
 
   return (
-    <Popover open={open} onOpenChange={setOpen} modal>
+    <Popover open={open} onOpenChange={setOpen} >
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          className="w-full justify-between rounded-xl min-h-[44px] h-auto px-3 py-2"
+        <div
+          className={cn(buttonVariants({ variant: "outline" }), "w-full justify-between rounded-xl min-h-[44px] h-auto px-3 py-2")}
         >
           <div className="flex flex-wrap gap-1 items-center">
             {selectedOptions.length > 0 ? (
               <>
                 {/* 👇 Visible chips */}
                 {selectedOptions.slice(0, MAX_VISIBLE).map((option) => (
-                  <span
+                  <div
                     key={option.value}
                     className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md text-xs"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation()
+                    }}
                   >
                     {option.label}
-                    <X
-                      className="h-3 w-3 cursor-pointer"
-                      onClick={(e) => {
+
+                    <button
+                      type="button"
+                      className="pointer-events-auto z-50 flex items-center justify-center cursor-pointer"
+                      onPointerDown={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
                         removeOption(option.value);
                       }}
-                    />
-                  </span>
+                    >
+                      <X className="h-3 w-3 shrink-0" />
+                    </button>
+                  </div>
                 ))}
 
                 {/* 👇 +X more with hover */}
@@ -132,10 +138,11 @@ export function MultiSelect({
           </div>
 
           <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50 shrink-0" />
-        </Button>
+        </div>
       </PopoverTrigger>
 
-      <PopoverContent className="w-full p-0 rounded-xl">
+      <PopoverContent className="w-full p-0 rounded-xl" sideOffset={8}
+      >
         <Command>
           <CommandInput placeholder="Search..." />
           <CommandEmpty>No results found.</CommandEmpty>

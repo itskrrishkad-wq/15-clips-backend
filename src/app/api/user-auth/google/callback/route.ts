@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  "http://localhost:3000/api/auth/google/callback"
+  `${process.env.NEXT_PUBLISH_BASE_URL}/api/auth/google/callback`,
 );
 
 export async function GET(req: NextRequest) {

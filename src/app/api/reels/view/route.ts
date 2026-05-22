@@ -19,10 +19,10 @@ export async function POST(req: NextRequest) {
     }
 
     const reel_view_exists = await prisma.reelView.findFirst({
-      where: { reelId: id, userId: uid },
+      where: { reelId: id, userId: user.id },
     });
 
-    if (!reel_view_exists) {
+    if (reel_view_exists) {
       return NextResponse.json({
         success: false,
         message: "reel view exists",

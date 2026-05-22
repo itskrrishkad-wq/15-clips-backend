@@ -1,6 +1,8 @@
 "use client";
 
 import ReelCardPreview from "@/components/reels/ReelCard";
+import ReviewReelCard from "@/components/reels/ReviewReelCard";
+import ReviewReelModal from "@/components/reels/ReviewReelDialog";
 import UpdateReelDialog from "@/components/reels/UpdateReelDialog";
 import UploadReelDialog from "@/components/reels/UploadReelDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -31,6 +33,7 @@ function ReelTable({ reels }: { reels: Reel[] }) {
         <div className="overflow-x-auto">
           <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-2">
             {reels.map((reel) => {
+              if (!reel.reelUrl) return;
               return (
                 <div
                   key={reel.id}
@@ -53,6 +56,63 @@ function ReelTable({ reels }: { reels: Reel[] }) {
   );
 }
 
+
+
+
+function ReviewReelTable({ reels }: { reels: Reel[] }) {
+  const [open, setOpen] = useState(false);
+  const [reel, setReel] = useState<Reel | null>(null);
+  if (reels.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary">
+          <Film className="h-7 w-7 text-muted-foreground" />
+        </div>
+        <p className="text-sm font-medium text-foreground">No reels found</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Try adjusting your search or filters
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="p-4">
+        <div className="overflow-x-auto">
+          <div className="w-full grid grid-cols-4 gap-2">
+            {reels.map((reel) => {
+              // if (!reel.reelUrl) return;
+              return (
+                <div
+                  key={reel.id}
+                  className="w-full h-full cursor-pointer"
+                >
+                  <ReviewReelCard reel={reel} setOpen={setOpen} setReel={setReel} />
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
+        <ReviewReelModal
+          open={open}
+          onClose={() => {
+            setOpen(false);
+            setReel(null)
+          }}
+          onChange={() => { }}
+          reel={reel}
+        />
+      </div>
+    </>
+  );
+}
+
+
+
+
+
 export default function ReelsPage() {
   const [reels, setReels] = useState<any[]>([]);
 
@@ -64,7 +124,7 @@ export default function ReelsPage() {
 
   // derived lists
   const published = reels.filter((r) => r.status === "PUBLISH");
-
+  const reviews = reels.filter((r) => r.status === "REVIEW");
   const drafts = reels.filter((r) => r.status === "DRAFT");
 
   useEffect(() => {
@@ -94,6 +154,9 @@ export default function ReelsPage() {
 
     fetch_reels();
   }, []);
+
+
+  console.log(reviews)
   return (
     <>
       <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -122,6 +185,12 @@ export default function ReelsPage() {
             >
               Published ({published.length})
             </TabsTrigger>
+            <TabsTrigger
+              value="reviews"
+              className="w-max h-auto px-3 py-2 text-xs font-medium rounded-t-lg border-x-0 border-t-0 border-b-2 border-transparent text-muted-foreground transition-all data-[state=active]:text-foreground data-[state=active]:border-blue-600 data-[state=active]:bg-blue-200/30"
+            >
+              Review ({reviews.length})
+            </TabsTrigger>
 
             <TabsTrigger
               value="drafts"
@@ -137,6 +206,11 @@ export default function ReelsPage() {
 
           <TabsContent value="published" className="mt-0 p-0">
             <ReelTable reels={published} />
+          </TabsContent>
+          <TabsContent value="reviews" className="mt-0 p-0">
+            <div className="p-4">
+              <ReviewReelTable reels={reviews} />
+            </div>
           </TabsContent>
 
           <TabsContent value="drafts" className="mt-0 p-0">

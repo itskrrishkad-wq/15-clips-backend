@@ -1,11 +1,12 @@
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { JWTPayloadCustom } from "../../ads/create/route";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 export async function DELETE(req: NextRequest) {
   try {
     const token = req.cookies.get("15clips-authentication")?.value;
+    const id = req.nextUrl.searchParams.get("id");
 
     if (!token) {
       return NextResponse.json({ success: false, message: "not authorized" });
@@ -27,7 +28,6 @@ export async function DELETE(req: NextRequest) {
     if (admin.role !== "MANAGER" && admin.role !== "ADMIN") {
       return NextResponse.json({ success: false, message: "not authorized" });
     }
-    const id = req.nextUrl.searchParams.get("id");
 
     if (!id) {
       return NextResponse.json({ success: false, message: "id missing" });
