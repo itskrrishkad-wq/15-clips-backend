@@ -197,7 +197,7 @@ export default function ReportCard({
               setConfirmDialogOpen(true);
             }}
           >
-            <SelectTrigger className="h-8 min-w-[120px] text-[11px]">
+            <SelectTrigger className="h-8 min-w-[90px] text-[11px]">
               <SelectValue />
             </SelectTrigger>
 
