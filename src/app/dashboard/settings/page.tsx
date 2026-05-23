@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { Bell, Download, Megaphone, User } from "lucide-react";
+import { Download, Megaphone } from "lucide-react";
 
 function SettingCard({
   icon: Icon,
@@ -67,7 +67,7 @@ export default function SettingsPage() {
           </div>
         </SettingCard>
 
-        <SettingCard icon={Bell} title="Notification Settings">
+        {/* <SettingCard icon={Bell} title="Notification Settings">
           <div className="space-y-3">
             {[
               "Email notifications",
@@ -84,9 +84,9 @@ export default function SettingsPage() {
               </div>
             ))}
           </div>
-        </SettingCard>
+        </SettingCard> */}
 
-        <SettingCard icon={User} title="Account Settings">
+        {/* <SettingCard icon={User} title="Account Settings">
           <div className="grid gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -108,7 +108,7 @@ export default function SettingsPage() {
               Save Changes
             </Button>
           </div>
-        </SettingCard>
+        </SettingCard> */}
       </div>
     </>
   );
