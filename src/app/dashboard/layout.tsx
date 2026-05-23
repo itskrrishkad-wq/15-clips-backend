@@ -1,15 +1,25 @@
 "use client";
 import { AppSidebar } from "@/components/dashboard/layout/AppSidebar";
 import { TopNavbar } from "@/components/dashboard/layout/TopNavbar";
+import { useInitializeApp } from "@/hooks/useInitializeApp";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { isLoading } = useInitializeApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background ">
@@ -34,7 +44,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="flex flex-1 flex-col bg-secondary overflow-hidden min-w-0">
         <TopNavbar onMenuToggle={() => setSidebarOpen(true)} />
         <main className="flex-1 overflow-auto p-4 sm:p-5 lg:p-7">
-          {children}
+          {!mounted && !isLoading ? (
+            <div className="flex h-full items-center justify-center">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : (
+            children
+          )}
         </main>
       </div>
     </div>

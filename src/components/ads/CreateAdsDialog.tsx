@@ -134,7 +134,7 @@ const CreateAdsDialog = () => {
 
       <DialogContent
         className="rounded-2xl !max-w-lg max-h-[80vh] overflow-y-auto"
-        aria-description={undefined}
+        aria-describedby={undefined}
       >
         <DialogHeader>
           <DialogTitle className="text-base">Create Ad</DialogTitle>

@@ -84,7 +84,8 @@ model Reel {
   sourceViews Int? @default(0)
   sourceLikee Int? @default(0)
 
-  createdAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  publishedAt DateTime?
 
   savedBy    User[]      @relation("SavedReels")
   reelViews  ReelView[]

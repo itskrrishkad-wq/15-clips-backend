@@ -34,7 +34,7 @@ const ReelCardPreview = ({
       className="
         group relative w-full
         max-w-56 overflow-hidden
-        rounded-[28px]
+        rounded-3xl
         border border-white/10
         bg-black
         aspect-[9/16]

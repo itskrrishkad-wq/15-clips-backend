@@ -1,4 +1,4 @@
-import { Reel, ReelStatus } from "@/generated/prisma/client";
+import { ReelStatus } from "@/generated/prisma/client";
 import { categorizeReels } from "@/lib/categoriesReels";
 import { fetchNewsYoutube, FetchReel } from "@/lib/fetchNewsYoutube2";
 import prisma from "@/lib/prisma";
@@ -37,6 +37,7 @@ type ReviewReelInput = {
 
   sourceViews: number;
   sourceLikee: number;
+  publishedAt: string;
 
   locations: string[];
 };
@@ -101,6 +102,7 @@ export async function GET(req: NextRequest) {
           sourceLikee: 0,
 
           locations: [],
+          publishedAt: reel.publishedAt,
         };
       });
 
@@ -128,7 +130,7 @@ export async function GET(req: NextRequest) {
       beforeFilter: reviewReels.length,
       afterfilter: filtered_reels.length,
     });
-    return NextResponse.json({ success: true, reels: filtered_reels });
+    return NextResponse.json({ success: true, reels: create_reels });
   } catch (error) {
     console.log("error while testing: ", error);
     return NextResponse.json(

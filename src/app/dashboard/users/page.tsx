@@ -1,6 +1,6 @@
 "use client";
 
-import { users } from "@/lib/mock-data";
+// import { users } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -13,12 +13,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { useUserStore } from "@/zustand/userStore";
+import { User } from "@/generated/prisma/browser";
 
 function UserCard({
   user,
   onClick,
 }: {
-  user: (typeof users)[0];
+  user: User;
   onClick: () => void;
 }) {
   return (
@@ -29,7 +31,7 @@ function UserCard({
       <div className="flex items-center gap-3">
         <Avatar className="h-9 w-9 shrink-0">
           <AvatarFallback className="gradient-primary text-primary-foreground text-[10px] font-semibold">
-            {user.name
+            {(user.name ?? "")
               .split(" ")
               .map((n) => n[0])
               .join("")}
@@ -41,15 +43,15 @@ function UserCard({
             {user.email}
           </p>
         </div>
-        <Badge
+        {/* <Badge
           variant={user.status === "active" ? "default" : "secondary"}
           className="rounded-lg text-[9px] capitalize shrink-0"
         >
           {user.status}
-        </Badge>
+        </Badge> */}
       </div>
       <div className="flex items-center gap-2 mt-2 pl-12 text-[10px] text-muted-foreground">
-        <span>{user.city}</span>
+        <span>{user.location}</span>
         <span>•</span>
         <span>{user.profession}</span>
       </div>
@@ -58,13 +60,14 @@ function UserCard({
 }
 
 export default function UsersPage() {
+  const { users } = useUserStore()
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<(typeof users)[0] | null>(
     null,
   );
   const filtered = users.filter(
     (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      (u.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase()),
   );
 
@@ -105,7 +108,7 @@ export default function UsersPage() {
                 "City",
                 "Profession",
                 "Interests",
-                "Status",
+                "Verified",
                 "",
               ].map((h) => (
                 <span
@@ -129,23 +132,23 @@ export default function UsersPage() {
                 <div className="flex items-center gap-3 min-w-0">
                   <Avatar className="h-8 w-8 shrink-0">
                     <AvatarFallback className="gradient-primary text-primary-foreground text-[10px] font-semibold">
-                      {user.name
+                      {(user.name ?? "")
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-[12px] font-medium truncate">
-                    {user.name}
+                    {user.name} {user.lname}
                   </span>
                 </div>
                 <span className="text-[12px] text-muted-foreground truncate">
                   {user.email}
                 </span>
                 <span className="text-[11px] text-muted-foreground tabular-nums">
-                  {user.phone}
+                  {user.phoneNo}
                 </span>
-                <span className="text-[12px]">{user.city}</span>
+                <span className="text-[12px]">{user.location}</span>
                 <span className="text-[12px]">{user.profession}</span>
                 <div className="flex gap-1 flex-wrap">
                   {user.interests.map((i) => (
@@ -158,12 +161,20 @@ export default function UsersPage() {
                     </Badge>
                   ))}
                 </div>
-                <Badge
+                <div className="flex gap-1 flex-wrap">
+                  <Badge
+                    variant={user.emailVerified ? "default" : "secondary"}
+                    className="rounded-lg text-[9px]"
+                  >
+                    {user.emailVerified ? "Verfied" : "Not Verified"}
+                  </Badge>
+                </div>
+                {/* <Badge
                   variant={user.status === "active" ? "default" : "secondary"}
                   className="rounded-lg text-[9px] capitalize w-fit"
                 >
                   {user.status}
-                </Badge>
+                </Badge> */}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -179,7 +190,7 @@ export default function UsersPage() {
       </div>
 
       <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
-        <DialogContent className="rounded-2xl max-w-[calc(100vw-2rem)] sm:max-w-md">
+        <DialogContent className="rounded-2xl max-w-[calc(100vw-2rem)] sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle className="text-base">User Profile</DialogTitle>
           </DialogHeader>
@@ -188,7 +199,7 @@ export default function UsersPage() {
               <div className="flex items-center gap-4">
                 <Avatar className="h-14 w-14 shrink-0">
                   <AvatarFallback className="gradient-primary text-primary-foreground text-base font-semibold">
-                    {selectedUser.name
+                    {(selectedUser.name ?? "")
                       .split(" ")
                       .map((n) => n[0])
                       .join("")}
@@ -199,16 +210,16 @@ export default function UsersPage() {
                     {selectedUser.name}
                   </h3>
                   <p className="text-[12px] text-muted-foreground">
-                    {selectedUser.profession} • {selectedUser.city}
+                    {selectedUser.profession} • {selectedUser.location}
                   </p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { label: "Email", value: selectedUser.email },
-                  { label: "Phone", value: selectedUser.phone },
-                  { label: "City", value: selectedUser.city },
-                  { label: "Status", value: selectedUser.status },
+                  { label: "Phone", value: selectedUser.phoneNo },
+                  { label: "City", value: selectedUser.location },
+                  // { label: "Status", value: selectedUser.status },
                 ].map((item) => (
                   <div
                     key={item.label}

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  statsCards,
   viewsOverTime,
   engagementData,
   recentReels,
@@ -9,9 +8,9 @@ import {
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ActivityChart } from "@/components/dashboard/ActivityChart";
 import { ProjectWork } from "@/components/dashboard/ProjectWork";
-import { ScheduleSection } from "@/components/dashboard/ScheduleSection";
-import { InvoiceOverview } from "@/components/dashboard/InvoiceOverview";
-import { RemindersSection } from "@/components/dashboard/RemindersSection";
+// import { ScheduleSection } from "@/components/dashboard/ScheduleSection";
+// import { InvoiceOverview } from "@/components/dashboard/InvoiceOverview";
+// import { RemindersSection } from "@/components/dashboard/RemindersSection";
 import { Film, Megaphone, Play, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,12 +26,31 @@ import {
   Bar,
   Cell,
 } from "recharts";
+import { useReelStore } from "@/zustand/reelStore";
+import { useReelViewStore } from "@/zustand/reelViewStore";
+import { useAdStore } from "@/zustand/adStore";
+import { useUserStore } from "@/zustand/userStore";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter()
+  const { reels } = useReelStore();
+  const { reelViews } = useReelViewStore()
+  const { ads } = useAdStore()
+  const { users } = useUserStore()
+
+
+  const statsCards = [
+    { title: "Total Reels", value: reels.length, change: "+12.5%", trend: "up" as const, icon: "Film" },
+    { title: "Total Views", value: reelViews.length, change: "+8.3%", trend: "up" as const, icon: "Eye" },
+    // { title: "Total Likes", value: "456K", change: "+15.2%", trend: "up" as const, icon: "Heart" },
+    { title: "Active Users", value: users.length, change: "+3.1%", trend: "up" as const, icon: "Users" },
+    { title: "Active Ads", value: ads.filter((ad) => ad.status === "ACTIVE").length, change: "-2.4%", trend: "down" as const, icon: "Megaphone" },
+  ];
   return (
     <div className="grid gap-4 sm:gap-6">
       {/* Stats Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
         {statsCards.map((stat, i) => (
           <div key={stat.title} style={{ animationDelay: `${i * 80}ms` }}>
             <StatsCard {...stat} />
@@ -235,12 +253,13 @@ export default function DashboardPage() {
               Quick Actions
             </h3>
             <div className="flex flex-col gap-2">
-              <Button className="w-full justify-start gap-2.5 rounded-xl h-10 gradient-primary shadow-glow text-[12px] font-medium border-0">
+              <Button className="w-full justify-start gap-2.5 rounded-xl h-10 gradient-primary shadow-glow text-[12px] font-medium border-0 cursor-pointer" onClick={() => router.push("/dashboard/reels")}>
                 <Film className="h-4 w-4" /> Upload Reel
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start gap-2.5 rounded-xl h-10 text-[12px] font-medium border-border/60 hover:bg-secondary hover:shadow-soft transition-all"
+                className="w-full justify-start gap-2.5 rounded-xl h-10 text-[12px] font-medium border-border/60 hover:bg-secondary hover:shadow-soft transition-all cursor-pointer"
+                onClick={() => router.push("/dashboard/ads")}
               >
                 <Megaphone className="h-4 w-4 text-accent-foreground" /> Create
                 Ad Campaign
@@ -248,16 +267,16 @@ export default function DashboardPage() {
             </div>
           </div>
           <ActivityChart />
-          <ProjectWork />
+          {/* <ProjectWork /> */}
         </div>
       </div>
 
       {/* Bottom Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         <InvoiceOverview />
         <ScheduleSection />
         <RemindersSection />
-      </div>
+      </div> */}
     </div>
   );
 }

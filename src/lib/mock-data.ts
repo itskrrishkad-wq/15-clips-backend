@@ -1,10 +1,4 @@
-export const statsCards = [
-  { title: "Total Reels", value: "2,456", change: "+12.5%", trend: "up" as const, icon: "Film" },
-  { title: "Total Views", value: "1.2M", change: "+8.3%", trend: "up" as const, icon: "Eye" },
-  { title: "Total Likes", value: "456K", change: "+15.2%", trend: "up" as const, icon: "Heart" },
-  { title: "Active Users", value: "12,847", change: "+3.1%", trend: "up" as const, icon: "Users" },
-  { title: "Active Ads", value: "156", change: "-2.4%", trend: "down" as const, icon: "Megaphone" },
-];
+
 
 export const viewsOverTime = [
   { name: "Mon", views: 4000, engagement: 2400 },

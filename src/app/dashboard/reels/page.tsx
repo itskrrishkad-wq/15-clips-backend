@@ -7,6 +7,7 @@ import UpdateReelDialog from "@/components/reels/UpdateReelDialog";
 import UploadReelDialog from "@/components/reels/UploadReelDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Reel } from "@/generated/prisma/client";
+import { useReelStore } from "@/zustand/reelStore";
 import { Film } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -114,9 +115,9 @@ function ReviewReelTable({ reels }: { reels: Reel[] }) {
 
 
 export default function ReelsPage() {
-  const [reels, setReels] = useState<any[]>([]);
-
-  const [loading, setLoading] = useState(true);
+  // const [reels, setReels] = useState<any[]>([]); 
+  const { reels } = useReelStore();
+  // const [loading, setLoading] = useState(true);
 
   // filter helper
   // const filtered = (lists: Reel[]) =>
@@ -127,33 +128,33 @@ export default function ReelsPage() {
   const reviews = reels.filter((r) => r.status === "REVIEW");
   const drafts = reels.filter((r) => r.status === "DRAFT");
 
-  useEffect(() => {
-    const fetch_reels = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/reels/get-all", {
-          method: "GET",
-          credentials: "include",
-        });
+  // useEffect(() => {
+  //   const fetch_reels = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const res = await fetch("/api/reels/get-all", {
+  //         method: "GET",
+  //         credentials: "include",
+  //       });
 
-        const data = await res.json();
+  //       const data = await res.json();
 
-        if (!data.success) {
-          console.log("Failed to fetch reels");
-          return;
-        }
+  //       if (!data.success) {
+  //         console.log("Failed to fetch reels");
+  //         return;
+  //       }
 
-        setReels(data.data || []);
-        console.log("reels data: ", data.data);
-      } catch (error) {
-        console.log("error while fetching reels", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       setReels(data.data || []);
+  //       console.log("reels data: ", data.data);
+  //     } catch (error) {
+  //       console.log("error while fetching reels", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetch_reels();
-  }, []);
+  //   fetch_reels();
+  // }, []);
 
 
   console.log(reviews)
@@ -170,14 +171,14 @@ export default function ReelsPage() {
       </div>
 
       <div className="rounded-2xl bg-card shadow-card overflow-hidden">
-        <Tabs defaultValue="all" className="w-full ">
+        <Tabs defaultValue="published" className="w-full ">
           <TabsList className="flex w-max !h-auto gap-2 border-b border-border/50 bg-transparent px-4 pt-2 overflow-x-auto ">
-            <TabsTrigger
+            {/* <TabsTrigger
               value="all"
               className="w-max h-auto px-3 py-2 text-xs font-medium rounded-t-lg border-x-0 border-t-0 border-b-2 border-transparent text-muted-foreground transition-all data-[state=active]:text-foreground data-[state=active]:border-blue-600 data-[state=active]:bg-blue-200/30"
             >
               All ({reels.length})
-            </TabsTrigger>
+            </TabsTrigger> */}
 
             <TabsTrigger
               value="published"
@@ -200,9 +201,9 @@ export default function ReelsPage() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="all" className="mt-0 p-0 ">
+          {/* <TabsContent value="all" className="mt-0 p-0 ">
             <ReelTable reels={reels} />
-          </TabsContent>
+          </TabsContent> */}
 
           <TabsContent value="published" className="mt-0 p-0">
             <ReelTable reels={published} />

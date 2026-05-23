@@ -173,7 +173,7 @@ const UploadReelDialog = () => {
 
       <DialogContent
         className="rounded-2xl max-w-[calc(100vw-2rem)] sm:max-w-lg max-h-[80vh] overflow-y-auto"
-        aria-description={undefined}
+        aria-describedby={undefined}
       >
         <DialogHeader>
           <DialogTitle className="text-base">

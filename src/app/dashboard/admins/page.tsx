@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AdminUser, AdminUserRole } from "@/generated/prisma/client";
+import { useAdminUserStore } from "@/zustand/adminStore";
 import { Shield, UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -57,7 +58,8 @@ function AdminCard({ admin }: { admin: AdminUser }) {
 }
 
 export default function AdminsPage() {
-  const [admins, setAdmins] = useState<AdminUser[]>([]);
+  const { adminUsers} = useAdminUserStore()
+  // const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [name, setName] = useState("");
@@ -68,30 +70,30 @@ export default function AdminsPage() {
   const [mounted, setMounted] = useState(false);
 
   // ✅ fetch admins
-  useEffect(() => {
-    const fetchAdmins = async () => {
-      try {
-        setLoading(true);
+  // useEffect(() => {
+  //   const fetchAdmins = async () => {
+  //     try {
+  //       setLoading(true);
 
-        const res = await fetch("/api/super-user/get-all", {
-          method: "GET",
-          credentials: "include",
-        });
+  //       const res = await fetch("/api/super-user/get-all", {
+  //         method: "GET",
+  //         credentials: "include",
+  //       });
 
-        const data = await res.json();
+  //       const data = await res.json();
 
-        if (!data.success) return;
+  //       if (!data.success) return;
 
-        setAdmins(data.data || []);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       setAdmins(data.data || []);
+  //     } catch (err) {
+  //       console.log(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchAdmins();
-  }, []);
+  //   fetchAdmins();
+  // }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -102,24 +104,24 @@ export default function AdminsPage() {
     return [
       {
         role: "ADMIN",
-        count: admins?.filter((a) => a.role === "ADMIN").length,
+        count: adminUsers?.filter((a) => a.role === "ADMIN").length,
         gradient: "gradient-primary",
         desc: "Full system access",
       },
       {
         role: "Manager",
-        count: admins?.filter((a) => a.role === "MANAGER").length,
+        count: adminUsers?.filter((a) => a.role === "MANAGER").length,
         gradient: "gradient-info",
         desc: "Manage reels & content",
       },
       {
         role: "Guest",
-        count: admins?.filter((a) => a.role === "GUEST").length,
+        count: adminUsers?.filter((a) => a.role === "GUEST").length,
         gradient: "gradient-warning",
         desc: "Manage campaigns",
       },
     ];
-  }, [admins]);
+  }, [adminUsers]);
 
   // ✅ role update handler
   const handleRoleChange = (id: string, role: AdminUser["role"]) => {
@@ -143,9 +145,9 @@ export default function AdminsPage() {
       }
 
       console.log("admin role Updated: ", res.data);
-      setAdmins((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, role: newRole } : a)),
-      );
+      // setAdmins((prev) =>
+      //   prev.map((a) => (a.id === id ? { ...a, role: newRole } : a)),
+      // );
     } catch (error) {
       console.log("error while updating admin role: ", error);
     }
@@ -191,7 +193,7 @@ export default function AdminsPage() {
 
       {/* MOBILE */}
       <div className="space-y-2 sm:hidden">
-        {admins.map((admin) => (
+        {adminUsers.map((admin) => (
           <AdminCard key={admin.id} admin={admin} />
         ))}
       </div>
@@ -212,7 +214,7 @@ export default function AdminsPage() {
               Loading admins...
             </div>
           )}
-          {admins.map((admin) => (
+          {adminUsers.map((admin) => (
             <div
               key={admin.id}
               className="grid grid-cols-4 gap-3 items-center py-3 border-b hover:bg-secondary/30 rounded-xl px-2"

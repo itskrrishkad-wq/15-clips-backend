@@ -12,7 +12,7 @@ const gradientMap: Record<string, string> = {
 
 interface StatsCardProps {
   title: string;
-  value: string;
+  value: number;
   change: string;
   trend: "up" | "down";
   icon: string;
@@ -21,7 +21,7 @@ interface StatsCardProps {
 export function StatsCard({ title, value, change, trend, icon }: StatsCardProps) {
   const Icon = iconMap[icon] || Film;
   const gradient = gradientMap[icon] || "gradient-primary";
-  
+
   return (
     <div className="group rounded-2xl bg-card p-5 shadow-card transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5 animate-fade-in">
       <div className="flex items-start justify-between mb-4">

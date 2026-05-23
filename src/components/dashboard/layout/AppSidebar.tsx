@@ -5,11 +5,11 @@ import {
   FolderPlusIcon,
   LayoutDashboard,
   Megaphone,
-  MessageCircleWarning,
   Settings,
   ShieldCheck,
+  TriangleAlertIcon,
   Users,
-  X,
+  X
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,7 +19,7 @@ const mainNav = [
   { title: "Reels", href: "/dashboard/reels", icon: Film },
   { title: "Ads", href: "/dashboard/ads", icon: Megaphone },
   { title: "Users", href: "/dashboard/users", icon: Users },
-  { title: "Reports", href: "/dashboard/reports", icon: MessageCircleWarning },
+  { title: "Reports", href: "/dashboard/reports", icon: TriangleAlertIcon },
   { title: "Sources", href: "/dashboard/sources", icon: FolderPlusIcon },
   { title: "Admins", href: "/dashboard/admins", icon: ShieldCheck },
 ];
@@ -41,15 +41,16 @@ export function AppSidebar({ onClose }: AppSidebarProps) {
   };
 
   return (
-    <aside className="flex h-screen w-[250px] flex-col bg-card px-5 py-7 border-r border-border/50">
+    <aside className="flex h-screen w-62.5 flex-col bg-card px-5 py-7 border-r border-border/50">
       {/* Logo */}
       <div className="mb-10 flex items-center justify-between px-3">
         <div className="flex items-center gap-3">
-          <div className="gradient-primary flex h-9 w-9 items-center justify-center rounded-xl shadow-glow">
+          {/* <div className="gradient-primary flex h-9 w-9 items-center justify-center rounded-xl shadow-glow">
             <span className="text-sm font-bold text-primary-foreground tracking-tight">
               15
             </span>
-          </div>
+          </div> */}
+          <img src={"/15Clips-white-icon.png"} className="w-9 h-9 shadow-glow rounded-xl overflow-hidden" alt="15-clips-icon" />
           <span className="text-[17px] font-semibold tracking-tight text-foreground">
             15 Clips
           </span>
