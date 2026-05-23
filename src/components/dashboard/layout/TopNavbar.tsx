@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Bell, LogOutIcon, Menu, Search } from "lucide-react";
+import { LogOutIcon, Menu } from "lucide-react";
 import { useState } from "react";
 
 interface TopNavbarProps {
@@ -52,7 +51,7 @@ export function TopNavbar({ onMenuToggle }: TopNavbarProps) {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        <div className="relative hidden sm:block">
+        {/* <div className="relative hidden sm:block">
           <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
           <Input
             placeholder="Search anything..."
@@ -67,7 +66,7 @@ export function TopNavbar({ onMenuToggle }: TopNavbarProps) {
         >
           <Bell className="h-[18px] w-[18px] text-muted-foreground" />
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full gradient-destructive ring-2 ring-card" />
-        </Button>
+        </Button> */}
 
         <Button
           variant="ghost"
