@@ -3,13 +3,14 @@ import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { UTApi } from "uploadthing/server";
 import { JWTPayloadCustom } from "../create/route";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 const utapi = new UTApi();
 
 export async function PUT(req: NextRequest) {
   try {
     const token = req.cookies.get("15clips-authentication")?.value;
+    const id = req.nextUrl.searchParams.get("id");
 
     if (!token) {
       return NextResponse.json({ success: false, message: "not authorized" });
@@ -41,7 +42,6 @@ export async function PUT(req: NextRequest) {
       : ({} as any);
 
     const {
-      id,
       title,
       description,
       url,

@@ -13,6 +13,9 @@ type ReviewReelInput = {
   channel: string;
   channelId: string;
 
+  title?: string;
+  description?: string;
+
   duration: number;
 
   interests: string[];
@@ -76,6 +79,9 @@ export async function GET(req: NextRequest) {
           channel: matchedSource?.channelName ?? "",
           channelId: reel.channelId,
 
+          title: reel.title,
+          description: reel.description,
+
           duration: reel.duration,
 
           interests: reel.categories,
@@ -123,13 +129,9 @@ export async function GET(req: NextRequest) {
     );
 
     const create_reels = await prisma.reel.createMany({
-      data: reviewReels,
+      data: filtered_reels,
     });
 
-    console.log({
-      beforeFilter: reviewReels.length,
-      afterfilter: filtered_reels.length,
-    });
     return NextResponse.json({ success: true, reels: create_reels });
   } catch (error) {
     console.log("error while testing: ", error);

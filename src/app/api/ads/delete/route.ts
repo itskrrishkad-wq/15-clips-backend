@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { JWTPayloadCustom } from "../create/route";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -45,6 +45,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "deleted successfully",
+      data: delete_a,
     });
   } catch (error) {
     console.log("error while deleting ad: ", error);

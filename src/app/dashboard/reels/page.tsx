@@ -209,9 +209,7 @@ export default function ReelsPage() {
             <ReelTable reels={published} />
           </TabsContent>
           <TabsContent value="reviews" className="mt-0 p-0">
-            <div className="p-4">
               <ReviewReelTable reels={reviews} />
-            </div>
           </TabsContent>
 
           <TabsContent value="drafts" className="mt-0 p-0">

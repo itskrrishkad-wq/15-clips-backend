@@ -59,7 +59,7 @@ export function MultiSelect({
   const MAX_VISIBLE = 3;
 
   return (
-    <Popover open={open} onOpenChange={setOpen} >
+    <Popover open={open} onOpenChange={setOpen} modal={true}>
       <PopoverTrigger asChild>
         <div
           className={cn(buttonVariants({ variant: "outline" }), "w-full justify-between rounded-xl min-h-[44px] h-auto px-3 py-2")}
@@ -142,7 +142,7 @@ export function MultiSelect({
       </PopoverTrigger>
 
       <PopoverContent className="w-full p-0 rounded-xl" sideOffset={8}
-      >
+       >
         <Command>
           <CommandInput placeholder="Search..." />
           <CommandEmpty>No results found.</CommandEmpty>

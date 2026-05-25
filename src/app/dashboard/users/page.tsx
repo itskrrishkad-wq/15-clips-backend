@@ -1,20 +1,38 @@
 "use client";
 
 // import { users } from "@/lib/mock-data";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Search, MoreHorizontal, UserPlus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useState } from "react";
-import { useUserStore } from "@/zustand/userStore";
+import { Input } from "@/components/ui/input";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarGroup,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger
+} from "@/components/ui/menubar";
 import { User } from "@/generated/prisma/browser";
+import { cn } from "@/lib/utils";
+import { useUserStore } from "@/zustand/userStore";
+import { differenceInYears } from "date-fns";
+import { MoreHorizontalIcon, Search } from "lucide-react";
+import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 function UserCard({
   user,
@@ -68,7 +86,7 @@ export default function UsersPage() {
   const filtered = users.filter(
     (u) =>
       (u.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase()),
+      u.email.toLowerCase().includes(search.toLowerCase()) || u.id.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -97,98 +115,151 @@ export default function UsersPage() {
       </div>
 
       {/* Desktop table */}
-      <div className="rounded-2xl bg-card shadow-card overflow-hidden animate-fade-in hidden sm:block">
-        <div className="px-5 pt-5 pb-2 overflow-x-auto">
-          <div className="min-w-[700px]">
-            <div className="grid grid-cols-[1fr_1fr_100px_80px_90px_100px_70px_40px] gap-3 border-b border-border/50 pb-2.5 px-2">
-              {[
-                "Name",
-                "Email",
-                "Phone",
-                "City",
-                "Profession",
-                "Interests",
-                "Verified",
-                "",
-              ].map((h) => (
-                <span
-                  key={h}
-                  className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+      <div className="rounded-2xl bg-card shadow-card hidden sm:block">
+        <div className="w-full overflow-x-auto">
+          <Table className="min-w-[1100px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>City</TableHead>
+                <TableHead>Age</TableHead>
+                <TableHead>Gender</TableHead>
+                <TableHead>Profession</TableHead>
+                <TableHead>Language</TableHead>
+                <TableHead>Interests</TableHead>
+                <TableHead>Daily time spend</TableHead>
+                <TableHead>Verified</TableHead>
+                <TableHead className="w-[50px]" />
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {filtered.map((user) => (
+                <TableRow
+                  key={user.id}
+                  className="group cursor-pointer"
                 >
-                  {h}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="px-5 pb-4 overflow-x-auto">
-          <div className="min-w-[700px]">
-            {filtered.map((user) => (
-              <div
-                key={user.id}
-                onClick={() => setSelectedUser(user)}
-                className="grid grid-cols-[1fr_1fr_100px_80px_90px_100px_70px_40px] gap-3 items-center py-3 border-b border-border/20 last:border-0 hover:bg-secondary/30 rounded-xl px-2 transition-all cursor-pointer group"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <Avatar className="h-8 w-8 shrink-0">
-                    <AvatarFallback className="gradient-primary text-primary-foreground text-[10px] font-semibold">
-                      {(user.name ?? "")
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-[12px] font-medium truncate">
-                    {user.name} {user.lname}
-                  </span>
-                </div>
-                <span className="text-[12px] text-muted-foreground truncate">
-                  {user.email}
-                </span>
-                <span className="text-[11px] text-muted-foreground tabular-nums">
-                  {user.phoneNo}
-                </span>
-                <span className="text-[12px]">{user.location}</span>
-                <span className="text-[12px]">{user.profession}</span>
-                <div className="flex gap-1 flex-wrap">
-                  {user.interests.map((i) => (
-                    <Badge
-                      key={i}
-                      variant="secondary"
-                      className="rounded-lg text-[9px]"
+                  <TableCell>
+                    <div
+                      className="flex items-center gap-3 min-w-0"
+                      onClick={() => setSelectedUser(user)}
                     >
-                      {i}
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarFallback className="gradient-primary text-primary-foreground text-[10px] font-semibold">
+                          {(user.name ?? "")
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+
+                      <span className="text-[12px] font-medium whitespace-nowrap">
+                        {user.name} {user.lname}
+                      </span>
+                    </div>
+                  </TableCell>
+
+                  <TableCell className="whitespace-nowrap text-[12px] text-muted-foreground">
+                    {user.email}
+                  </TableCell>
+
+                  <TableCell className="whitespace-nowrap text-[12px]">
+                    {user.location}
+                  </TableCell>
+
+                  <TableCell className="text-[12px]">
+                    {user.dob
+                      ? differenceInYears(
+                        new Date(),
+                        new Date(user.dob)
+                      )
+                      : ""}
+                  </TableCell>
+
+                  <TableCell className="whitespace-nowrap text-[12px]">
+                    {user.gender}
+                  </TableCell>
+
+                  <TableCell className="whitespace-nowrap text-[12px]">
+                    {user.profession}
+                  </TableCell>
+
+                  <TableCell className="whitespace-nowrap text-[12px]">
+                    {user.languages[0]}
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="flex gap-1 flex-wrap min-w-[180px]">
+                      {user.interests.map((i) => (
+                        <Badge
+                          key={i}
+                          variant="secondary"
+                          className="rounded-lg text-[9px]"
+                        >
+                          {i}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+
+                  <TableCell className="whitespace-nowrap text-[12px]">
+                    {user.dailyTimeSpent}
+                  </TableCell>
+
+                  <TableCell>
+                    <Badge
+                      variant={
+                        user.emailVerified
+                          ? "default"
+                          : "secondary"
+                      }
+                      className="rounded-lg text-[9px] whitespace-nowrap"
+                    >
+                      {user.emailVerified
+                        ? "Verified"
+                        : "Not Verified"}
                     </Badge>
-                  ))}
-                </div>
-                <div className="flex gap-1 flex-wrap">
-                  <Badge
-                    variant={user.emailVerified ? "default" : "secondary"}
-                    className="rounded-lg text-[9px]"
-                  >
-                    {user.emailVerified ? "Verfied" : "Not Verified"}
-                  </Badge>
-                </div>
-                {/* <Badge
-                  variant={user.status === "active" ? "default" : "secondary"}
-                  className="rounded-lg text-[9px] capitalize w-fit"
-                >
-                  {user.status}
-                </Badge> */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MoreHorizontal className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            ))}
-          </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <Menubar className="border-none">
+                      <MenubarMenu>
+                        <MenubarTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+                          >
+                            <MoreHorizontalIcon className="h-3.5 w-3.5" />
+                          </Button>
+                        </MenubarTrigger>
+
+                        <MenubarContent>
+                          <MenubarGroup className="space-y-0.5">
+                            <MenubarItem>Edit</MenubarItem>
+
+                            <MenubarItem
+                              className={cn(
+                                buttonVariants({
+                                  variant: "destructive",
+                                }),
+                                "w-full justify-start"
+                              )}
+                            >
+                              Delete
+                            </MenubarItem>
+                          </MenubarGroup>
+                        </MenubarContent>
+                      </MenubarMenu>
+                    </Menubar>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
-
       <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
         <DialogContent className="rounded-2xl max-w-[calc(100vw-2rem)] sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader>

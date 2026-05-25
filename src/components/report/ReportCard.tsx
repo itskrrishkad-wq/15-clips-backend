@@ -1,17 +1,11 @@
 "use client";
 
+import { useState } from "react";
+
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  AlertTriangle,
-  Clock3,
-  Copyright,
-  ShieldAlert,
-  Sparkles,
-  CheckCircle2,
-  MessageSquareText,
-} from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+
 import {
   Select,
   SelectContent,
@@ -19,7 +13,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+
+import { formatDistanceToNow } from "date-fns";
+
+import {
+  AlertTriangle,
+  Check,
+  Clock3,
+  Copy,
+  Copyright,
+  MessageSquareText,
+  ShieldAlert,
+  Sparkles,
+} from "lucide-react";
+
 import { ConfirmReportStatusDialog } from "./ConfirmReportStatusDialog";
 
 type ReportReason =
@@ -97,11 +104,60 @@ const reasonConfig: Record<
   },
 };
 
+function CopyableId({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 1500);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2 text-[11px] text-zinc-500">
+      <span className="font-medium text-zinc-900">
+        {label}:
+      </span>
+
+      <code className="max-w-[120px] truncate rounded-md bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-zinc-700">
+        {value}
+      </code>
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        onClick={handleCopy}
+        className="h-5 w-5 rounded-md"
+      >
+        {copied ? (
+          <Check className="size-3 text-green-500" />
+        ) : (
+          <Copy className="size-3" />
+        )}
+      </Button>
+    </div>
+  );
+}
+
 export default function ReportCard({
   report,
 }: ReportCardProps) {
   const reason = reasonConfig[report.reason];
-
 
   // ==============================
   // REPORT CARD STATUS SELECT
@@ -146,97 +202,117 @@ export default function ReportCard({
   };
 
   return (
-    <Card className="overflow-hidden border-white/10 bg-secondary text-foreground py-0">
-      <div className="flex flex-col gap-4 p-4">
-        {/* top */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="relative h-14 w-14 overflow-hidden rounded-xl bg-white/5">
-              {report.reel.thumbnailUrl ? (
-                <img
-                  src={report.reel.thumbnailUrl}
-                  alt="reel"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-white/5 text-xs text-zinc-500">
-                  No Image
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-1">
-
-              <p className="text-xs text-zinc-500">
-                Reported by{" "}
-                <span className="font-medium text-zinc-600">
-                  {report.user.username ||
-                    report.user.name ||
-                    "Unknown User"}
-                </span>
-              </p>
-
-              <div className="flex items-center gap-1 text-xs text-zinc-500">
-                <Clock3 className="size-3.5" />
-
-                {formatDistanceToNow(
-                  new Date(report.createdAt),
-                  {
-                    addSuffix: true,
-                  }
+    <>
+      <Card className="overflow-hidden border-white/10 bg-secondary py-0 text-foreground">
+        <div className="flex flex-col gap-4 p-4">
+          {/* TOP */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              {/* THUMBNAIL */}
+              <div className="relative h-14 w-14 overflow-hidden rounded-xl bg-white/5 shrink-0">
+                {report.reel.thumbnailUrl ? (
+                  <img
+                    src={report.reel.thumbnailUrl}
+                    alt="reel"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-white/5 text-xs text-zinc-500">
+                    No Image
+                  </div>
                 )}
               </div>
+
+              {/* META */}
+              <div className="space-y-2">
+                <p className="text-xs text-zinc-500">
+                  Reported by{" "}
+                  <span className="font-medium text-zinc-800">
+                    {report.user.username ||
+                      report.user.name ||
+                      "Unknown User"}
+                  </span>
+                </p>
+
+                {/* IDS */}
+
+
+                {/* TIME */}
+                <div className="flex items-center gap-1 text-xs text-zinc-500">
+                  <Clock3 className="size-3.5" />
+
+                  {formatDistanceToNow(
+                    new Date(report.createdAt),
+                    {
+                      addSuffix: true,
+                    }
+                  )}
+                </div>
+              </div>
             </div>
+
+            {/* STATUS */}
+            <Select
+              value={status}
+              onValueChange={(val) => {
+                setNewStatus(val as ReportStatus);
+                setConfirmDialogOpen(true);
+              }}
+            >
+              <SelectTrigger className="h-8 min-w-[90px] text-[11px]">
+                <SelectValue />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="PENDING">
+                  Pending
+                </SelectItem>
+
+                <SelectItem value="RESOLVED">
+                  Resolved
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* status */}
-          <Select
-            value={status}
-            onValueChange={(val) => {
-              setNewStatus(val as ReportStatus);
-              setConfirmDialogOpen(true);
-            }}
-          >
-            <SelectTrigger className="h-8 min-w-[90px] text-[11px]">
-              <SelectValue />
-            </SelectTrigger>
-
-            <SelectContent>
-              <SelectItem value="PENDING">
-                Pending
-              </SelectItem>
-
-              <SelectItem value="RESOLVED">
-                Resolved
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* reason */}
-        <div>
-          <Badge
-            variant="outline"
-            className={`gap-1.5 px-3 py-1 ${reason.color}`}
-          >
-            {reason.icon}
-            {reason.label}
-          </Badge>
-        </div>
-
-        {/* note */}
-        {report.note && (
-          <div className="rounded-xl border border-white/5 bg-white/[0.03] p-3">
-            <p className="mb-1 text-xs font-medium text-zinc-400">
-              Additional Note
-            </p>
-
-            <p className="text-sm leading-relaxed text-zinc-600">
-              {report.note}
-            </p>
+          {/* REASON */}
+          <div>
+            <Badge
+              variant="outline"
+              className={`gap-1.5 px-3 py-1 ${reason.color}`}
+            >
+              {reason.icon}
+              {reason.label}
+            </Badge>
           </div>
-        )}
-      </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <CopyableId
+              label="Reel ID"
+              value={report.reel.id}
+            />
+
+            <CopyableId
+              label="Student ID"
+              value={report.user.id}
+            />
+          </div>
+
+          {/* NOTE */}
+          {report.note && (
+            <div className="rounded-xl border border-white/5 bg-white/[0.03] p-3">
+              <p className="mb-1 text-xs font-medium text-zinc-800">
+                Additional Note
+              </p>
+
+              <p className="text-sm leading-relaxed text-zinc-900">
+                {report.note}
+              </p>
+            </div>
+          )}
+        </div>
+      </Card>
+
       <ConfirmReportStatusDialog
         reportId={report.id}
         newStatus={newStatus}
@@ -244,6 +320,6 @@ export default function ReportCard({
         openChange={setConfirmDialogOpen}
         onConfirm={handleUpdateStatus}
       />
-    </Card>
+    </>
   );
 }

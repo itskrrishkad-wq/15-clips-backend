@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { UTApi } from "uploadthing/server";
 import { JWTPayloadCustom } from "../../ads/create/route";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 const utapi = new UTApi();
 
@@ -43,8 +43,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: "file missing" });
     }
 
-    const { languages, locations, professions, source, sourceUrl, status } =
-      reels_data;
+    const {
+      languages,
+      locations,
+      professions,
+      source,
+      sourceUrl,
+      status,
+      title,
+      description,
+    } = reels_data;
 
     console.log({
       languages,
@@ -82,6 +90,8 @@ export async function POST(req: NextRequest) {
 
     const create_reel = await prisma.reel.create({
       data: {
+        title,
+        description,
         reelUrl: video_url,
         source,
         sourceUrl,

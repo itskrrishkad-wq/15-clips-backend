@@ -19,11 +19,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, PlusCircle, Upload } from "lucide-react";
+import {
+  Loader2,
+  PlusCircle,
+  Upload,
+} from "lucide-react";
 import { topCitiesInIndia } from "@/data/cities";
 import { Topprofessions } from "@/data/professions";
 import { Textarea } from "../ui/textarea";
 import { AdType } from "@/generated/prisma/enums";
+import { indianLanguages } from "@/data/languages";
 
 const CreateAdsDialog = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -37,6 +42,7 @@ const CreateAdsDialog = () => {
   const [interests, setInterests] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
   const [professions, setProfessions] = useState<string[]>([]);
+  const [languages, setLanguages] = useState<string[]>([]);
 
   const [gender, setGender] = useState("all");
   const [status, setStatus] = useState("DRAFT");
@@ -50,15 +56,45 @@ const CreateAdsDialog = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleFileChange = (file: File | null) => {
+  const handleFileChange = (
+    file: File | null
+  ) => {
     if (!file) return;
+
     setFile(file);
     setPreview(URL.createObjectURL(file));
+
+    if (file.type.startsWith("image")) {
+      setType("IMAGE");
+    }
+
+    if (file.type.startsWith("video")) {
+      setType("VIDEO");
+    }
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setFile(null);
+    setPreview(null);
+    setUrl("");
+    setInterests([]);
+    setLocations([]);
+    setProfessions([]);
+    setGender("all");
+    setStatus("DRAFT");
+    setType("VIDEO");
+    setAgeMin("");
+    setAgeMax("");
+    setStartAt("");
+    setEndAt("");
   };
 
   const handleCreateAd = async () => {
     if (!file) {
-      return alert("Please upload an ad file");
+      alert("Please upload an ad file");
+      return;
     }
 
     try {
@@ -73,6 +109,7 @@ const CreateAdsDialog = () => {
         interests,
         locations,
         professions,
+        languages,
         gender,
         startAt,
         endAt,
@@ -83,273 +120,457 @@ const CreateAdsDialog = () => {
       };
 
       formData.append("file", file);
-      formData.append("ads_info", JSON.stringify(payload));
+      formData.append(
+        "ads_info",
+        JSON.stringify(payload)
+      );
 
-      const res = await fetch("/api/ads/create", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
+      const res = await fetch(
+        "/api/ads/create",
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
 
       const data = await res.json();
 
       if (!data.success) {
-        console.log("Error:", data.message);
+        console.log(
+          "Error:",
+          data.message
+        );
         return;
       }
 
-      console.log("Ad Created:", data.data);
+      console.log(
+        "Ad Created:",
+        data.data
+      );
+
+      resetForm();
     } catch (error) {
-      console.log("Error creating ad:", error);
+      console.log(
+        "Error creating ad:",
+        error
+      );
     } finally {
       setIsLoading(false);
-
-      // reset
-      setTitle("");
-      setDescription("");
-      setFile(null);
-      setPreview(null);
-      setUrl("");
-      setInterests([]);
-      setLocations([]);
-      setProfessions([]);
-      setGender("all");
-      setStatus("DRAFT");
-      setType("VIDEO");
-      setAgeMin("");
-      setAgeMax("");
-      setStartAt("");
-      setEndAt("");
     }
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="gap-2 rounded-xl gradient-primary border-0 h-10 text-[13px]">
+        <Button className="h-10 gap-2 rounded-xl border-0 gradient-primary text-[13px]">
           <PlusCircle className="h-4 w-4" />
           Create Ad
         </Button>
       </DialogTrigger>
 
       <DialogContent
-        className="rounded-2xl !max-w-lg max-h-[80vh] overflow-y-auto"
+        className="overflow-hidden rounded-3xl border-border/50 p-0 !max-w-6xl"
         aria-describedby={undefined}
       >
-        <DialogHeader>
-          <DialogTitle className="text-base">Create Ad</DialogTitle>
-        </DialogHeader>
+        <div className="grid max-h-[90vh] grid-cols-1 lg:grid-cols-[420px_minmax(0,1fr)]">
+          {/* LEFT SIDE */}
+          <div className="flex items-center justify-center border-r border-border/40 bg-black/80 p-4">
+            <div className="w-full">
+              {preview ? (
+                <>
+                  {type === "VIDEO" && (
+                    <video
+                      src={preview}
+                      controls
+                      className="max-h-[75vh] w-full rounded-2xl object-contain"
+                    />
+                  )}
 
-        <div className="grid gap-4 py-4">
-          {/* Title */}
-          <div>
-            <Label className="text-[12px]">Title</Label>
-            <Input
-              className="mt-1.5 rounded-xl"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
+                  {type === "IMAGE" && (
+                    <img
+                      src={preview}
+                      alt="preview"
+                      className="max-h-[75vh] w-full rounded-2xl object-contain"
+                    />
+                  )}
+                </>
+              ) : (
+                <label
+                  htmlFor="ad-upload"
+                  className="flex h-[500px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border/50 bg-secondary/20 text-center"
+                >
+                  <Upload className="mb-4 h-10 w-10 text-muted-foreground" />
 
-          {/* Description */}
-          <div>
-            <Label className="text-[12px]">Description</Label>
-            <Textarea
-              className="mt-1.5 rounded-xl"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
+                  <p className="text-sm font-medium">
+                    Upload Ad Media
+                  </p>
 
-          {/* FILE UPLOAD */}
-          <input
-            type="file"
-            accept="image/*,video/*"
-            id="ad-upload"
-            className="hidden"
-            onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
-          />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Image or Video
+                  </p>
+                </label>
+              )}
 
-          <label
-            htmlFor="ad-upload"
-            className="flex h-32 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-border/50 bg-secondary/30 text-[12px]"
-          >
-            <div className="text-center">
-              <Upload className="h-6 w-6 mx-auto mb-2" />
-              {file ? file.name : "Click to upload ad (image/video)"}
-            </div>
-          </label>
-
-          {preview && file?.type.startsWith("video") && (
-            <video
-              src={preview}
-              controls
-              className="rounded-xl w-full max-h-60"
-            />
-          )}
-
-          {preview && file?.type.startsWith("image") && (
-            <img
-              src={preview}
-              alt="preview"
-              className="rounded-xl w-full max-h-60 object-cover"
-            />
-          )}
-
-          {/* URL */}
-          <div>
-            <Label className="text-[12px]">Redirect URL</Label>
-            <Input
-              className="mt-1.5 rounded-xl"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-            />
-          </div>
-
-          {/* Interests */}
-          <div>
-            <Label className="text-[12px]">Interests</Label>
-            <MultiSelect
-              options={[
-                { label: "Tech", value: "tech" },
-                { label: "Fashion", value: "fashion" },
-                { label: "Sports", value: "sports" },
-              ]}
-              selected={interests}
-              onChange={setInterests}
-              placeholder="Select interests"
-            />
-          </div>
-
-          {/* Locations */}
-          <div>
-            <Label className="text-[12px]">Locations</Label>
-            <MultiSelect
-              options={topCitiesInIndia.map((city) => ({
-                label: city,
-                value: city.toLowerCase(),
-              }))}
-              selected={locations}
-              onChange={setLocations}
-              placeholder="Select locations"
-            />
-          </div>
-
-          {/* Professions */}
-          <div>
-            <Label className="text-[12px]">Professions</Label>
-            <MultiSelect
-              options={Topprofessions.map((prof) => ({
-                label: prof,
-                value: prof.toLowerCase(),
-              }))}
-              selected={professions}
-              onChange={setProfessions}
-              placeholder="Select professions"
-            />
-          </div>
-
-          {/* Gender */}
-          <div>
-            <Label className="text-[12px]">Gender</Label>
-            <Select value={gender} onValueChange={setGender}>
-              <SelectTrigger className="mt-1.5 rounded-xl">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Age Range */}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <Label className="text-[12px]">Min Age</Label>
-              <Input
-                type="number"
-                className="mt-1.5 rounded-xl"
-                value={ageMin}
-                onChange={(e) => setAgeMin(Number(e.target.value))}
+              {/* FILE INPUT */}
+              <input
+                type="file"
+                accept="image/*,video/*"
+                id="ad-upload"
+                className="hidden"
+                onChange={(e) =>
+                  handleFileChange(
+                    e.target.files?.[0] ||
+                    null
+                  )
+                }
               />
+
+              {preview && (
+                <label
+                  htmlFor="ad-upload"
+                  className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-border/50 bg-secondary/40 px-4 py-3 text-sm"
+                >
+                  <Upload className="h-4 w-4" />
+                  Change Media
+                </label>
+              )}
             </div>
-            <div>
-              <Label className="text-[12px]">Max Age</Label>
-              <Input
-                type="number"
-                className="mt-1.5 rounded-xl"
-                value={ageMax}
-                onChange={(e) => setAgeMax(Number(e.target.value))}
-              />
+          </div>
+
+          {/* RIGHT SIDE */}
+          <div className="overflow-y-auto overflow-x-hidden p-6">
+            <DialogHeader>
+              <DialogTitle className="text-xl">
+                Create Ad
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="mt-6 grid gap-5">
+              {/* TITLE */}
+              <div>
+                <Label className="text-[12px]">
+                  Title
+                </Label>
+
+                <Input
+                  className="mt-1.5 rounded-2xl"
+                  value={title}
+                  onChange={(e) =>
+                    setTitle(
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+
+              {/* DESCRIPTION */}
+              <div>
+                <Label className="text-[12px]">
+                  Description
+                </Label>
+
+                <Textarea
+                  className="mt-1.5 min-h-28 rounded-2xl"
+                  value={description}
+                  onChange={(e) =>
+                    setDescription(
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+
+              {/* URL */}
+              <div>
+                <Label className="text-[12px]">
+                  Redirect URL
+                </Label>
+
+                <Input
+                  className="mt-1.5 rounded-2xl"
+                  value={url}
+                  onChange={(e) =>
+                    setUrl(
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+
+              {/* INTERESTS */}
+              <div>
+                <Label className="text-[12px]">
+                  Interests
+                </Label>
+
+                <MultiSelect
+                  options={[
+                    {
+                      label: "Tech",
+                      value: "tech",
+                    },
+                    {
+                      label: "Fashion",
+                      value: "fashion",
+                    },
+                    {
+                      label: "Sports",
+                      value: "sports",
+                    },
+                  ]}
+                  selected={interests}
+                  onChange={setInterests}
+                  placeholder="Select interests"
+                />
+              </div>
+
+              {/* LOCATIONS */}
+              <div>
+                <Label className="text-[12px]">
+                  Locations
+                </Label>
+
+                <MultiSelect
+                  options={topCitiesInIndia.map(
+                    (city) => ({
+                      label: city,
+                      value:
+                        city.toLowerCase(),
+                    })
+                  )}
+                  selected={locations}
+                  onChange={setLocations}
+                  placeholder="Select locations"
+                />
+              </div>
+
+              {/* Languages */}
+              <div>
+                <Label className="text-[12px]">Languages</Label>
+                <MultiSelect
+                  options={indianLanguages.map((lang) => ({
+                    label: lang.label,
+                    value: lang.value.toLowerCase(),
+                  }))}
+                  selected={languages}
+                  onChange={setLanguages}
+                  placeholder="Select languages"
+                />
+              </div>
+
+              {/* PROFESSIONS */}
+              <div>
+                <Label className="text-[12px]">
+                  Professions
+                </Label>
+
+                <MultiSelect
+                  options={Topprofessions.map(
+                    (prof) => ({
+                      label: prof,
+                      value:
+                        prof.toLowerCase(),
+                    })
+                  )}
+                  selected={professions}
+                  onChange={setProfessions}
+                  placeholder="Select professions"
+                />
+              </div>
+
+              {/* GENDER + TYPE */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-[12px]">
+                    Gender
+                  </Label>
+
+                  <Select
+                    value={gender}
+                    onValueChange={
+                      setGender
+                    }
+                  >
+                    <SelectTrigger className="mt-1.5 rounded-2xl">
+                      <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="all">
+                        All
+                      </SelectItem>
+
+                      <SelectItem value="male">
+                        Male
+                      </SelectItem>
+
+                      <SelectItem value="female">
+                        Female
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-[12px]">
+                    Ad Type
+                  </Label>
+
+                  <Select
+                    value={type}
+                    onValueChange={(
+                      value
+                    ) =>
+                      setType(
+                        value as AdType
+                      )
+                    }
+                  >
+                    <SelectTrigger className="mt-1.5 rounded-2xl">
+                      <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="VIDEO">
+                        VIDEO
+                      </SelectItem>
+
+                      <SelectItem value="IMAGE">
+                        IMAGE
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* AGE RANGE */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-[12px]">
+                    Min Age
+                  </Label>
+
+                  <Input
+                    type="number"
+                    className="mt-1.5 rounded-2xl"
+                    value={ageMin}
+                    onChange={(e) =>
+                      setAgeMin(
+                        Number(
+                          e.target.value
+                        )
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-[12px]">
+                    Max Age
+                  </Label>
+
+                  <Input
+                    type="number"
+                    className="mt-1.5 rounded-2xl"
+                    value={ageMax}
+                    onChange={(e) =>
+                      setAgeMax(
+                        Number(
+                          e.target.value
+                        )
+                      )
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* DATES */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-[12px]">
+                    Start Date
+                  </Label>
+
+                  <Input
+                    type="date"
+                    className="mt-1.5 rounded-2xl"
+                    value={startAt}
+                    onChange={(e) =>
+                      setStartAt(
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-[12px]">
+                    End Date
+                  </Label>
+
+                  <Input
+                    type="date"
+                    className="mt-1.5 rounded-2xl"
+                    value={endAt}
+                    onChange={(e) =>
+                      setEndAt(
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* STATUS */}
+              <div>
+                <Label className="text-[12px]">
+                  Status
+                </Label>
+
+                <Select
+                  value={status}
+                  onValueChange={
+                    setStatus
+                  }
+                >
+                  <SelectTrigger className="mt-1.5 rounded-2xl">
+                    <SelectValue />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="ACTIVE">
+                      Active
+                    </SelectItem>
+
+                    <SelectItem value="PAUSED">
+                      Paused
+                    </SelectItem>
+
+                    <SelectItem value="DRAFT">
+                      Draft
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* BUTTON */}
+              <Button
+                className="mt-2 h-11 rounded-2xl border-0 gradient-primary"
+                onClick={handleCreateAd}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Creating...
+                  </span>
+                ) : (
+                  "Create Ad"
+                )}
+              </Button>
             </div>
           </div>
-
-          {/* Dates */}
-          <div>
-            <Label className="text-[12px]">Start Date</Label>
-            <Input
-              type="date"
-              className="mt-1.5 rounded-xl"
-              value={startAt}
-              onChange={(e) => setStartAt(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <Label className="text-[12px]">End Date</Label>
-            <Input
-              type="date"
-              className="mt-1.5 rounded-xl"
-              value={endAt}
-              onChange={(e) => setEndAt(e.target.value)}
-            />
-          </div>
-
-          {/* Type */}
-          <div>
-            <Label className="text-[12px]">Ad Type</Label>
-            <Select value={type} onValueChange={(value) => setType("VIDEO")}>
-              <SelectTrigger className="mt-1.5 rounded-xl">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="VIDEO">Video</SelectItem>
-                <SelectItem value="IMAGE">IMAGE</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Status */}
-          <div>
-            <Label className="text-[12px]">Status</Label>
-            <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="mt-1.5 rounded-xl">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ACTIVE">Active</SelectItem>
-                <SelectItem value="PAUSED">Paused</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Action */}
-          <Button
-            className="rounded-xl gradient-primary border-0 text-[12px]"
-            onClick={handleCreateAd}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <span className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Creating...
-              </span>
-            ) : (
-              "Create Ad"
-            )}
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,23 +1,45 @@
 "use client";
 
-import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import Link from "next/link";
 
 import CreateAdsDialog from "@/components/ads/CreateAdsDialog";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 import { useAdStore } from "@/zustand/adStore";
 
 import {
+  Menubar,
+  MenubarContent,
+  MenubarGroup,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger
+} from "@/components/ui/menubar";
+import { cn } from "@/lib/utils";
+import { useAdEventStore } from "@/zustand/adViewStore";
+import {
   Eye,
   MoreHorizontal,
   MousePointer,
+  PlayCircle,
   TrendingUp,
   Users,
-  PlayCircle,
 } from "lucide-react";
-import { useAdEventStore } from "@/zustand/adViewStore";
+import { useState } from "react";
+import { Ad } from "@/generated/prisma/client";
+import UpdateAdDialog from "@/components/ads/UpdateAdDialog";
+import { DeleteAdDialog } from "@/components/ads/DeleteAdDialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
 
 function calculateAdAnalytics(
   adId: string,
@@ -206,9 +228,13 @@ function AdCard({
 }
 
 export default function AdsPage() {
-  const { ads } = useAdStore();
-
+  const { ads, removeAd } = useAdStore();
   const { AdEvents } = useAdEventStore();
+  const [updateAdDialogOpen, setUpdateAdDialogOpen] = useState(false);
+  const [deleteAdDialogOpen, setDeleteAdDialogOpen] = useState(false);
+  const [deleteAd, setDeleteAd] = useState<Ad | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [updateAd, setUpdateAd] = useState<Ad | null>(null);
 
   const totalImpressions = AdEvents.filter(
     (e) => e.eventType === "VIEW"
@@ -260,6 +286,33 @@ export default function AdsPage() {
         "from-sky-500/20 to-cyan-500/20 text-sky-500",
     },
   ];
+
+
+  const handle_ad_del = async () => {
+    if (!deleteAd) return;
+    try {
+      setIsDeleting(true)
+      const response = await fetch(`/api/ads/delete?id=${deleteAd.id}`, {
+        method: "DELETE",
+        credentials: "include",
+
+      });
+
+      const res = await response.json();
+
+      if (!res.success) {
+        console.log("error deleting ad: ", res.messgae)
+        return;
+      }
+
+      removeAd(res.data.id)
+
+    } catch (error) {
+      console.log("error deleting ad: ", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  }
 
   return (
     <div className="grid gap-4 sm:gap-6">
@@ -328,117 +381,169 @@ export default function AdsPage() {
         </div>
 
         {/* DESKTOP */}
-        <div className="hidden overflow-x-auto px-5 pb-4 sm:block">
-          <div className="min-w-[1000px]">
-            <div className="mb-1 grid grid-cols-[1.5fr_80px_90px_100px_80px_80px_100px_120px_50px] gap-3 border-b border-border/50 px-2 pb-2.5">
-              {[
-                "Campaign",
-                "Type",
-                "Status",
-                "Impressions",
-                "Clicks",
-                "CTR",
-                "Reach",
-                "Top Location",
-                "",
-              ].map((h) => (
-                <span
-                  key={h}
-                  className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
-                >
-                  {h}
-                </span>
-              ))}
-            </div>
+        <div className="overflow-x-auto px-5 pb-4">
+          <Table className="min-w-[1000px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Campaign</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Impressions</TableHead>
+                <TableHead>Clicks</TableHead>
+                <TableHead>CTR</TableHead>
+                <TableHead>Reach</TableHead>
+                <TableHead>Top Location</TableHead>
+                <TableHead className="w-[50px]" />
+              </TableRow>
+            </TableHeader>
 
-            {ads.map((ad) => {
-              const analytics = calculateAdAnalytics(
-                ad.id,
-                AdEvents
-              );
+            <TableBody>
+              {ads.map((ad) => {
+                const analytics = calculateAdAnalytics(
+                  ad.id,
+                  AdEvents
+                )
 
-              return (
-                <Link
-                  href={`/dashboard/ads/${ad.id}`}
-                  key={ad.id}
-                  className="w-full"
-                >
-                  <div className="group grid grid-cols-[1.5fr_80px_90px_100px_80px_80px_100px_120px_50px] items-center gap-3 rounded-xl border-b border-border/20 px-2 py-3 transition-all hover:bg-secondary/30">
+                return (
+                  <TableRow
+                    key={ad.id}
+                    className="group hover:bg-secondary/30"
+                  >
                     {/* CAMPAIGN */}
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <PlayCircle className="h-4 w-4 shrink-0 text-primary" />
+                    <TableCell className="min-w-[280px]">
+                      <Link
+                        href={`/dashboard/ads/${ad.id}`}
+                        className="block w-full"
+                      >
+                        <div className="flex items-center gap-2">
+                          <PlayCircle className="h-4 w-4 shrink-0 text-primary" />
 
-                        <span className="truncate text-[13px] font-medium">
-                          {ad.title}
-                        </span>
-                      </div>
+                          <span className="truncate text-[13px] font-medium">
+                            {ad.title}
+                          </span>
+                        </div>
 
-                      <p className="mt-1 truncate text-[11px] text-muted-foreground">
-                        {ad.description}
-                      </p>
-                    </div>
+                        <p className="mt-1 truncate text-[11px] text-muted-foreground">
+                          {ad.description}
+                        </p>
+                      </Link>
+                    </TableCell>
 
                     {/* TYPE */}
-                    <Badge
-                      variant="secondary"
-                      className="w-fit rounded-lg text-[9px]"
-                    >
-                      {ad.type}
-                    </Badge>
+                    <TableCell>
+                      <Badge
+                        variant="secondary"
+                        className="rounded-lg text-[9px] whitespace-nowrap"
+                      >
+                        {ad.type}
+                      </Badge>
+                    </TableCell>
 
                     {/* STATUS */}
-                    <Badge
-                      variant={
-                        ad.status === "ACTIVE"
-                          ? "default"
-                          : "secondary"
-                      }
-                      className="w-fit rounded-lg text-[9px]"
-                    >
-                      {ad.status}
-                    </Badge>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          ad.status === "ACTIVE"
+                            ? "default"
+                            : "secondary"
+                        }
+                        className="rounded-lg text-[9px] whitespace-nowrap"
+                      >
+                        {ad.status}
+                      </Badge>
+                    </TableCell>
 
                     {/* IMPRESSIONS */}
-                    <span className="text-[12px] tabular-nums">
+                    <TableCell className="text-[12px] tabular-nums whitespace-nowrap">
                       {analytics.impressions.toLocaleString()}
-                    </span>
+                    </TableCell>
 
                     {/* CLICKS */}
-                    <span className="text-[12px] tabular-nums">
+                    <TableCell className="text-[12px] tabular-nums whitespace-nowrap">
                       {analytics.totalClicks.toLocaleString()}
-                    </span>
+                    </TableCell>
 
                     {/* CTR */}
-                    <span className="text-[12px] font-semibold tabular-nums text-primary">
+                    <TableCell className="text-[12px] font-semibold tabular-nums text-primary whitespace-nowrap">
                       {analytics.ctr}%
-                    </span>
+                    </TableCell>
 
                     {/* REACH */}
-                    <span className="text-[12px] tabular-nums">
+                    <TableCell className="text-[12px] tabular-nums whitespace-nowrap">
                       {analytics.uniqueReach.toLocaleString()}
-                    </span>
+                    </TableCell>
 
                     {/* LOCATION */}
-                    <span className="truncate text-[12px]">
+                    <TableCell className="max-w-[140px] truncate text-[12px]">
                       {analytics.topLocation}
-                    </span>
+                    </TableCell>
 
-                    {/* ACTION */}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
-                    >
-                      <MoreHorizontal className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                    {/* ACTIONS */}
+                    <TableCell>
+                      <Menubar className="w-max border-none">
+                        <MenubarMenu>
+                          <MenubarTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+                            >
+                              <MoreHorizontal className="h-3.5 w-3.5" />
+                            </Button>
+                          </MenubarTrigger>
+
+                          <MenubarContent>
+                            <MenubarGroup className="space-y-0.5">
+                              <MenubarItem
+                                onClick={() => {
+                                  setUpdateAd(ad)
+                                  setUpdateAdDialogOpen(true)
+                                }}
+                              >
+                                Edit
+                              </MenubarItem>
+
+                              <MenubarItem
+                                className={cn(
+                                  buttonVariants({
+                                    variant: "destructive",
+                                  }),
+                                  "w-full justify-start"
+                                )}
+                                onClick={() => {
+                                  setDeleteAd(ad)
+                                  setDeleteAdDialogOpen(true)
+                                }}
+                              >
+                                Delete
+                              </MenubarItem>
+                            </MenubarGroup>
+                          </MenubarContent>
+                        </MenubarMenu>
+                      </Menubar>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
         </div>
       </div>
+      <UpdateAdDialog
+        ad={updateAd}
+        onOpenChange={setUpdateAdDialogOpen}
+        open={updateAdDialogOpen}
+        setUpdateAd={setUpdateAd}
+      />
+      <DeleteAdDialog
+        adTitle={deleteAd?.title}
+        onConfirm={handle_ad_del}
+        open={deleteAdDialogOpen}
+        openChange={setDeleteAdDialogOpen}
+        setDeleteAd={setDeleteAd}
+        isLoading={isDeleting}
+
+      />
     </div>
   );
 }

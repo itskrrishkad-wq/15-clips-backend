@@ -25,6 +25,7 @@ import { commonInterests } from "@/data/intrests";
 import { indianLanguages } from "@/data/languages";
 import { PROFESSIONS } from "@/data/professions";
 import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 
 type Props = {
   open: boolean;
@@ -85,6 +86,11 @@ const UpdateReelDialog = ({
   const [videoUrl, setVideoUrl] =
     useState("");
 
+  const [title, setTitle] =
+    useState("");
+  const [description, setDescription] =
+    useState("");
+
   const [languages, setLanguages] =
     useState<string[]>([]);
 
@@ -112,6 +118,8 @@ const UpdateReelDialog = ({
   useEffect(() => {
     if (!reel) return;
 
+    setTitle(reel.title || "");
+    setDescription(reel.description || "");
     setLanguages(reel.languages || []);
     setLocations(reel.locations || []);
     setProfessions(
@@ -162,6 +170,8 @@ const UpdateReelDialog = ({
       formData.append(
         "update_info",
         JSON.stringify({
+          title,
+          description,
           languages,
           locations,
           professions,
@@ -474,6 +484,72 @@ const UpdateReelDialog = ({
                   />
                 </div>
 
+                {/* TITLE */}
+                <div className="space-y-2">
+                  <label
+                    className="
+                      text-sm font-medium
+                    "
+                  >
+                    Title
+                  </label>
+
+                  <input
+                    value={title}
+                    onChange={(e) =>
+                      setTitle(
+                        e.target.value
+                      )
+                    }
+                    className="
+                      flex h-11
+                      w-full rounded-xl
+                      border border-input
+                      bg-background
+                      px-4 py-2
+                      text-sm
+                      outline-none
+                      transition-all
+                      focus:border-ring
+                      focus:ring-2
+                      focus:ring-ring/20
+                    "
+                  />
+                </div>
+
+                {/* DESCRIPTION */}
+                <div className="space-y-2">
+                  <label
+                    className="
+                      text-sm font-medium
+                    "
+                  >
+                    Description
+                  </label>
+
+                  <input
+                    value={description}
+                    onChange={(e) =>
+                      setDescription(
+                        e.target.value
+                      )
+                    }
+                    className="
+                      flex h-11
+                      w-full rounded-xl
+                      border border-input
+                      bg-background
+                      px-4 py-2
+                      text-sm
+                      outline-none
+                      transition-all
+                      focus:border-ring
+                      focus:ring-2
+                      focus:ring-ring/20
+                    "
+                  />
+                </div>
+
                 {/* VIDEO URL */}
                 <div className="space-y-2">
                   <label
@@ -484,7 +560,7 @@ const UpdateReelDialog = ({
                     Video URL
                   </label>
 
-                  <input
+                  <Textarea
                     value={videoUrl}
                     onChange={(e) =>
                       setVideoUrl(

@@ -25,6 +25,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { commonInterests } from "@/data/intrests";
 import { ReelStatus } from "@/generated/prisma/enums";
+import { Textarea } from "../ui/textarea";
 
 const UploadReelDialog = () => {
   const [step, setStep] = useState(1);
@@ -33,6 +34,11 @@ const UploadReelDialog = () => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState("");
+
+  const [title, setTitle] =
+    useState("");
+  const [description, setDescription] =
+    useState("");
 
   const [languages, setLanguages] = useState<string[]>([]);
   const [interests, setInterests] = useState<string[]>([]);
@@ -76,6 +82,8 @@ const UploadReelDialog = () => {
       }
       const formData = new FormData();
       const file_reel_info = {
+        title: title,
+        description: description,
         languages: languages,
         locations: locations,
         professions: professions,
@@ -109,6 +117,8 @@ const UploadReelDialog = () => {
       setMethod("");
       setFile(null);
       setPreview(null);
+      setTitle("")
+      setDescription("")
       setLanguages([]);
       setInterests([]);
       setLocations([]);
@@ -248,6 +258,28 @@ const UploadReelDialog = () => {
                       className="rounded-xl w-full max-h-60"
                     />
                   )}
+
+                  {/* Title */}
+                  <div>
+                    <Label className="text-[12px]">Title</Label>
+                    <Input
+                      className="mt-1.5 rounded-xl"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Video title"
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <Label className="text-[12px]">Description (optional)</Label>
+                    <Textarea
+                      className="mt-1.5 rounded-xl"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Video Description"
+                    />
+                  </div>
 
                   {/* Source */}
                   <div>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
 import { format } from "date-fns";
+import { useMemo, useState } from "react";
 
 import {
     Area,
@@ -28,10 +28,18 @@ import {
     Users,
 } from "lucide-react";
 
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { AdStatus } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
 import { useAdStore } from "@/zustand/adStore";
 import { useAdEventStore } from "@/zustand/adViewStore";
-import { useParams, useRouter } from "next/navigation";
+import { ConfirmAdStatusDialog } from "./ConfirmAdStatusDialog";
 
 const tooltipStyle = {
     backgroundColor: "hsl(var(--card))",
@@ -54,11 +62,12 @@ function getAgeRange(age?: number | null) {
 
 
 
-export default function AdStatPage({id}: {id: string}) {
+export default function AdStatPage({ id }: { id: string }) {
     const adId = id;
     const { ads } = useAdStore();
-
     const { AdEvents } = useAdEventStore();
+    const [adStatus, setAdStatus] = useState<AdStatus>("ACTIVE")
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false)
 
     const ad = ads.find((a) => a.id === adId);
     // const ad = ads[0]
@@ -395,13 +404,29 @@ export default function AdStatPage({id}: {id: string}) {
                             </p>
 
                             <div className="mt-1 flex items-center gap-1.5">
-                                <div className="h-2 w-2 rounded-full bg-success" />
+                                <div className="h-2 w-2 rounded-full bg-success shrink-0" />
 
-                                <p className="text-lg font-bold">
-                                    {ad.status === "ACTIVE"
-                                        ? "Running"
-                                        : ad.status}
-                                </p>
+                                <div className="flex-1">
+                                    <Select
+                                        value={ad.status}
+                                        onValueChange={(val) => {
+                                            setAdStatus(val as AdStatus);
+                                            setConfirmDialogOpen(true);
+                                        }}
+                                    >
+                                        <SelectTrigger className="h-8 w-full! text-[11px]">
+                                            <SelectValue />
+                                        </SelectTrigger>
+
+                                        <SelectContent>
+                                            <SelectItem value="ACTIVE">Active</SelectItem>
+                                            <SelectItem value="PAUSED">Paused</SelectItem>
+                                            <SelectItem value="SCHEDULED">Scheduled</SelectItem>
+                                            <SelectItem value="COMPLETED">Completed</SelectItem>
+                                            <SelectItem value="CANCELED">Canceled</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -837,6 +862,14 @@ export default function AdStatPage({id}: {id: string}) {
                     </div>
                 </div>
             </div>
+            <ConfirmAdStatusDialog
+                adId={ad.id}
+                adTitle={ad.title}
+                newStatus={adStatus}
+                open={confirmDialogOpen}
+                openChange={setConfirmDialogOpen}
+                onConfirm={() => { }}
+            />
         </div>
     );
 }

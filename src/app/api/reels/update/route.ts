@@ -37,7 +37,7 @@ export async function PUT(req: NextRequest) {
     const update_info: Partial<Reel> = update_info_string
       ? JSON.parse(update_info_string.toString())
       : "";
-    const { id, languages, locations, professions, status, source, sourceUrl } =
+    const { id, languages, locations, professions, status, source, sourceUrl, title, description } =
       update_info;
 
     if (
@@ -121,6 +121,8 @@ export async function PUT(req: NextRequest) {
           sourceUrl: sourceUrl,
           source: source,
           reelUrl: video_url,
+          title,
+          description
         }),
       },
     });

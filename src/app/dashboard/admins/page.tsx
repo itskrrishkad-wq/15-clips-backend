@@ -3,7 +3,7 @@
 import { ConfirmRoleChangeDialog } from "@/components/admin/AlertDialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -13,8 +13,17 @@ import {
 } from "@/components/ui/select";
 import { AdminUser, AdminUserRole } from "@/generated/prisma/client";
 import { useAdminUserStore } from "@/zustand/adminStore";
-import { Shield, UserPlus } from "lucide-react";
+import { MoreHorizontalIcon, Shield, UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarGroup,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger
+} from "@/components/ui/menubar";
+import { cn } from "@/lib/utils";
 
 function AdminCard({ admin }: { admin: AdminUser }) {
   return (
@@ -58,7 +67,7 @@ function AdminCard({ admin }: { admin: AdminUser }) {
 }
 
 export default function AdminsPage() {
-  const { adminUsers} = useAdminUserStore()
+  const { adminUsers } = useAdminUserStore()
   // const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -205,6 +214,7 @@ export default function AdminsPage() {
             <span>Admin</span>
             <span>Email</span>
             <span>Role</span>
+            <span>Action</span>
           </div>
         </div>
 
@@ -261,9 +271,32 @@ export default function AdminsPage() {
               {/* LAST LOGIN */}
 
               {/* ACTION */}
-              {/* <Button variant="ghost" size="icon">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button> */}
+              <Menubar className="w-max border-none">
+                <MenubarMenu>
+                  <MenubarTrigger asChild className="w-max!">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-lg"
+                    >
+                      <MoreHorizontalIcon className="h-3.5 w-3.5" />
+                    </Button>
+                  </MenubarTrigger>
+                  <MenubarContent>
+                    <MenubarGroup className="space-y-0.5">
+                      <MenubarItem>
+                        Edit
+                      </MenubarItem>
+                      <MenubarItem
+                        className={cn(buttonVariants({ variant: "destructive" }), "w-full justify-start")}
+                      >
+                        Delete
+                      </MenubarItem>
+                    </MenubarGroup>
+
+                  </MenubarContent>
+                </MenubarMenu>
+              </Menubar>
             </div>
           ))}
         </div>

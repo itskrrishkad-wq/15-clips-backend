@@ -21,6 +21,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 
 type Props = {
     open: boolean;
@@ -66,6 +67,10 @@ export default function ReviewReelModal({
     reel,
     onChange,
 }: Props) {
+    const [title, setTitle] =
+        useState("");
+    const [description, setDescription] =
+        useState("");
     const [languages, setLanguages] = useState<string[]>([]);
     const [interests, setInterests] = useState<string[]>([]);
     const [locations, setLocations] = useState<string[]>([]);
@@ -78,6 +83,8 @@ export default function ReviewReelModal({
     useEffect(() => {
         if (!reel) return;
 
+        setTitle(reel.title || "");
+        setDescription(reel.description || "");
         setLanguages(reel.languages || []);
         setLocations(reel.locations || []);
         setProfessions(reel.professions || []);
@@ -112,6 +119,8 @@ export default function ReviewReelModal({
                 },
                 credentials: "include",
                 body: JSON.stringify({
+                    title,
+                    description,
                     id: reel.id,
                     languages,
                     locations,
@@ -338,6 +347,78 @@ export default function ReviewReelModal({
                                         onChange={(e) =>
                                             update(
                                                 "channel",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="
+                      flex h-11 w-full
+                      rounded-xl border
+                      border-input bg-background
+                      px-4 py-2 text-sm
+                      text-foreground
+                      outline-none transition-all
+                      placeholder:text-muted-foreground
+                      focus:border-ring
+                      focus:ring-2
+                      focus:ring-ring/20
+                    "
+                                    />
+                                </div>
+
+                                {/* TITLE */}
+                                <div className="space-y-2">
+                                    <label
+                                        className="
+                      text-sm font-medium
+                      text-foreground
+                    "
+                                    >
+                                        Title
+                                    </label>
+
+                                    <input
+                                        value={
+                                            reel.title || ""
+                                        }
+                                        onChange={(e) =>
+                                            update(
+                                                "title",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="
+                      flex h-11 w-full
+                      rounded-xl border
+                      border-input bg-background
+                      px-4 py-2 text-sm
+                      text-foreground
+                      outline-none transition-all
+                      placeholder:text-muted-foreground
+                      focus:border-ring
+                      focus:ring-2
+                      focus:ring-ring/20
+                    "
+                                    />
+                                </div>
+
+                                {/* DESCRIPTION */}
+                                <div className="space-y-2">
+                                    <label
+                                        className="
+                      text-sm font-medium
+                      text-foreground
+                    "
+                                    >
+                                        Description (optional)
+                                    </label>
+
+                                    <Textarea
+                                        value={
+                                            reel.description || ""
+                                        }
+                                        onChange={(e) =>
+                                            update(
+                                                "description",
                                                 e.target.value
                                             )
                                         }

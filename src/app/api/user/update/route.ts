@@ -14,6 +14,7 @@ export async function PUT(req: NextRequest) {
       gender,
       location,
       profession,
+      dailyTimeSpent,
       email,
       interests,
       accessToken,
@@ -41,6 +42,7 @@ export async function PUT(req: NextRequest) {
       gender,
       location,
       profession,
+      dailyTimeSpent,
       email,
       interests,
       accessToken,
@@ -78,6 +80,7 @@ export async function PUT(req: NextRequest) {
         lname,
         location,
         gender,
+        dailyTimeSpent: dailyTimeSpent ? dailyTimeSpent : user.dailyTimeSpent,
       },
     });
 
