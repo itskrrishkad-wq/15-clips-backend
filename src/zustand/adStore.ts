@@ -44,7 +44,6 @@ export const useAdStore = create<AdState>((set) => ({
     set((state) => ({
       ads: state.ads.filter((ad) => ad.id !== id),
     })),
-
   resetAds: () =>
     set({
       ads: [],

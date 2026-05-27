@@ -14,19 +14,24 @@ export async function POST(req: NextRequest) {
 
     const reels = await prisma.reel.findMany({ where: { status: "PUBLISH" } });
 
+    const saved = await prisma.reelSaved.findMany({
+      where: { userId: id },
+      include: { reel: true },
+    });
+    console.log({ saved });
+
     const views = await prisma.reelView.findMany();
 
     const new_reels = reels.filter((reel) =>
       views.some((view) => view.reelId !== reel.id),
     );
 
-    console.log({ new_reels });
-
     if (reels.length <= 0) {
       return NextResponse.json({
         success: false,
         message: "no reels available",
         data: [],
+        saved: [],
       });
     }
 
@@ -34,6 +39,7 @@ export async function POST(req: NextRequest) {
       success: true,
       message: "ok",
       data: reels,
+      saved,
     });
   } catch (error) {
     console.error("error while getting feed: ", error);

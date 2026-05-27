@@ -392,15 +392,15 @@ const UpdateAdDialog = ({
                                         </SelectTrigger>
 
                                         <SelectContent>
-                                            <SelectItem value="all">
+                                            <SelectItem value="All">
                                                 All
                                             </SelectItem>
 
-                                            <SelectItem value="male">
+                                            <SelectItem value="Male">
                                                 Male
                                             </SelectItem>
 
-                                            <SelectItem value="female">
+                                            <SelectItem value="Female">
                                                 Female
                                             </SelectItem>
                                         </SelectContent>

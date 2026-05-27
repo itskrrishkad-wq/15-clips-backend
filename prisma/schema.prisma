@@ -44,7 +44,8 @@ model User {
   phoneNo    String?
   gender     String?
 
-  emailVerified Boolean @default(false)
+  emailVerified Boolean     @default(false)
+  accountType   AccountType
 
   dailyTimeSpent Int?
   reasonToJoin   String?
@@ -58,6 +59,11 @@ model User {
   reelLikes  ReelLike[]
   reelSaveds ReelSaved[]
   reports    Report[]
+}
+
+enum AccountType {
+  GOOGLE
+  EMAIL
 }
 
 model Reel {

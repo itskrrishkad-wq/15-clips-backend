@@ -33,6 +33,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import UpdateUserDialog from "@/components/users/UpdateUserDialog";
+import { DeleteUserDialog } from "@/components/users/DeleteUserDialog";
 
 function UserCard({
   user,
@@ -78,16 +80,49 @@ function UserCard({
 }
 
 export default function UsersPage() {
-  const { users } = useUserStore()
+  const { users, removeUser } = useUserStore()
+
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<(typeof users)[0] | null>(
     null,
   );
+  const [updateUser, setUpdateUser] = useState<User | null>(null);
+  const [updateUserOpen, setUpdateUserOpen] = useState(false);
+  const [deleteUserOpen, setDeleteUserOpen] = useState(false);
+  const [deleteUser, setDeleteUser] = useState<User | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false)
+
   const filtered = users.filter(
     (u) =>
       (u.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase()) || u.id.toLowerCase().includes(search.toLowerCase()),
   );
+
+
+  const handle_del_user = async () => {
+    if (!deleteUser) return;
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/user/delete?id=${deleteUser?.id}`, {
+        method: "DELETE",
+        credentials: "include"
+      })
+
+      const res = await response.json();
+
+      if (!res.success) {
+        console.log("error deleting user: ", res.message);
+        return;
+      }
+
+      removeUser(deleteUser.id);
+    } catch (error) {
+      console.log("error deleting user ", error);
+    } finally {
+      setIsDeleting(false);
+      setDeleteUserOpen(false)
+    }
+  }
 
   return (
     <>
@@ -122,7 +157,7 @@ export default function UsersPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>City</TableHead>
+                <TableHead>Location</TableHead>
                 <TableHead>Age</TableHead>
                 <TableHead>Gender</TableHead>
                 <TableHead>Profession</TableHead>
@@ -237,7 +272,14 @@ export default function UsersPage() {
 
                         <MenubarContent>
                           <MenubarGroup className="space-y-0.5">
-                            <MenubarItem>Edit</MenubarItem>
+                            <MenubarItem
+                              onClick={() => {
+                                setUpdateUser(user);
+                                setUpdateUserOpen(true)
+                              }}
+                            >
+                              Edit
+                            </MenubarItem>
 
                             <MenubarItem
                               className={cn(
@@ -246,6 +288,10 @@ export default function UsersPage() {
                                 }),
                                 "w-full justify-start"
                               )}
+                              onClick={() => {
+                                setDeleteUser(user);
+                                setDeleteUserOpen(true)
+                              }}
                             >
                               Delete
                             </MenubarItem>
@@ -260,6 +306,7 @@ export default function UsersPage() {
           </Table>
         </div>
       </div>
+      
       <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
         <DialogContent className="rounded-2xl max-w-[calc(100vw-2rem)] sm:max-w-md" aria-describedby={undefined}>
           <DialogHeader>
@@ -325,6 +372,22 @@ export default function UsersPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <UpdateUserDialog
+        onOpenChange={setUpdateUserOpen}
+        setUpdateUser={setUpdateUser}
+        open={updateUserOpen}
+        user={updateUser}
+      />
+
+      <DeleteUserDialog
+        onConfirm={handle_del_user}
+        open={deleteUserOpen}
+        openChange={setDeleteUserOpen}
+        setDeleteUser={setDeleteUser}
+        isLoading={isDeleting}
+        userName={deleteUser?.name ?? ""}
+      />
     </>
   );
 }

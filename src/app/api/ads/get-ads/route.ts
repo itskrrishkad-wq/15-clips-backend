@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    console.log({ ads });
     return NextResponse.json({ success: true, message: "ok", data: ads });
   } catch (error) {
     console.log("error while getting ads: ", error);

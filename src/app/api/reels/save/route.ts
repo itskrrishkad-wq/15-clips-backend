@@ -52,10 +52,13 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      await prisma.reelSaved.create({
+      const savedReel = await prisma.reelSaved.create({
         data: {
           reelId: rid,
           userId: uid,
+        },
+        include: {
+          reel: true,
         },
       });
 
@@ -70,6 +73,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({
         success: true,
         message: "saved",
+        data: savedReel,
       });
     }
 
