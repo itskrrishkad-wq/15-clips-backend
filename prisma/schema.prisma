@@ -45,7 +45,7 @@ model User {
   gender     String?
 
   emailVerified Boolean     @default(false)
-  accountType   AccountType
+  accountType   AccountType @default(EMAIL)
 
   dailyTimeSpent Int?
   reasonToJoin   String?
