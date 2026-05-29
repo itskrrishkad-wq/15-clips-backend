@@ -82,9 +82,11 @@ export async function PUT(req: NextRequest) {
         lname,
         location,
         gender,
-        dailyTimeSpent: dailyTimeSpent ? dailyTimeSpent : user.dailyTimeSpent,
+        dailyTimeSpent: dailyTimeSpent
+          ? parseInt(dailyTimeSpent)
+          : user.dailyTimeSpent,
         dob: dob ? new Date(dob) : user.dob,
-        languages: languages ? languages : user.languages,
+        languages: languages ? [languages] : user.languages,
       },
     });
 
