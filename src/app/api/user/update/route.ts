@@ -13,6 +13,8 @@ export async function PUT(req: NextRequest) {
       lname,
       gender,
       location,
+      languages,
+      dob,
       profession,
       dailyTimeSpent,
       email,
@@ -81,6 +83,8 @@ export async function PUT(req: NextRequest) {
         location,
         gender,
         dailyTimeSpent: dailyTimeSpent ? dailyTimeSpent : user.dailyTimeSpent,
+        dob: dob ? dob : user.dob,
+        languages: languages ? languages : user.languages,
       },
     });
 
