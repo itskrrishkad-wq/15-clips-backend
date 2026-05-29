@@ -25,10 +25,11 @@ import {
   Upload,
 } from "lucide-react";
 import { topCitiesInIndia } from "@/data/cities";
-import { Topprofessions } from "@/data/professions";
 import { Textarea } from "../ui/textarea";
 import { AdType } from "@/generated/prisma/enums";
 import { indianLanguages } from "@/data/languages";
+import { PROFESSIONS } from "@/data/professions";
+import { INTERESTS } from "@/data/intrests";
 
 const CreateAdsDialog = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -305,20 +306,10 @@ const CreateAdsDialog = () => {
                 </Label>
 
                 <MultiSelect
-                  options={[
-                    {
-                      label: "Tech",
-                      value: "tech",
-                    },
-                    {
-                      label: "Fashion",
-                      value: "fashion",
-                    },
-                    {
-                      label: "Sports",
-                      value: "sports",
-                    },
-                  ]}
+                  options={INTERESTS.map((lang) => ({
+                    label: lang.label,
+                    value: lang.id,
+                  }))}
                   selected={interests}
                   onChange={setInterests}
                   placeholder="Select interests"
@@ -366,11 +357,11 @@ const CreateAdsDialog = () => {
                 </Label>
 
                 <MultiSelect
-                  options={Topprofessions.map(
+                  options={PROFESSIONS.map(
                     (prof) => ({
-                      label: prof,
+                      label: prof.label,
                       value:
-                        prof.toLowerCase(),
+                        prof.id,
                     })
                   )}
                   selected={professions}

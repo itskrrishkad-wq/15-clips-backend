@@ -15,6 +15,105 @@ export const commonInterests: string[] = [
   "Crime",
 ];
 
+export const INTERESTS = [
+  {
+    id: "all",
+    label: "All",
+    plainLabel: "All",
+    color: "bg-red-50",
+  },
+  {
+    id: "political",
+    label: "🏛️ Political",
+    plainLabel: "Political",
+    color: "bg-red-50",
+  },
+  {
+    id: "technology",
+    label: "💻 Technology",
+    plainLabel: "Technology",
+    color: "bg-blue-50",
+  },
+  {
+    id: "geopolitics",
+    label: "🌍 Geopolitics",
+    plainLabel: "Geopolitics",
+    color: "bg-indigo-50",
+  },
+  {
+    id: "learning",
+    label: "🎓 Learning & Education",
+    plainLabel: "Learning & Education",
+    color: "bg-gray-50",
+  },
+  {
+    id: "business",
+    label: "💼 Business",
+    plainLabel: "Business",
+    color: "bg-yellow-50",
+  },
+  {
+    id: "health",
+    label: "❤️ Health",
+    plainLabel: "Health",
+    color: "bg-green-50",
+  },
+  {
+    id: "finance",
+    label: "💰 Finance",
+    plainLabel: "Finance",
+    color: "bg-emerald-50",
+  },
+  {
+    id: "art",
+    label: "🎨 Art & Culture",
+    plainLabel: "Art & Culture",
+    color: "bg-pink-50",
+  },
+  {
+    id: "music",
+    label: "🎵 Music",
+    plainLabel: "Music",
+    color: "bg-purple-50",
+  },
+  {
+    id: "sports",
+    label: "🏆 Sports",
+    plainLabel: "Sports",
+    color: "bg-orange-50",
+  },
+  {
+    id: "travel",
+    label: "✈️ Travel",
+    plainLabel: "Travel",
+    color: "bg-sky-50",
+  },
+  {
+    id: "food",
+    label: "🍔 Food",
+    plainLabel: "Food",
+    color: "bg-lime-50",
+  },
+  {
+    id: "movies",
+    label: "🎬 Movies",
+    plainLabel: "Movies",
+    color: "bg-gray-100",
+  },
+  {
+    id: "gaming",
+    label: "🎮 Gaming",
+    plainLabel: "Gaming",
+    color: "bg-red-100",
+  },
+  {
+    id: "crime",
+    label: "🚨 Crime",
+    plainLabel: "Crime",
+    color: "bg-rose-100",
+  },
+];
+
 export const CATEGORY_KEYWORDS: Record<string, string[]> = {
   political: [
     // politics

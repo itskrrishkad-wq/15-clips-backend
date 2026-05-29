@@ -9,9 +9,7 @@ import Image from "next/image";
 import { MultiSelect } from "@/components/MultiSelectComp";
 
 import { topCitiesInIndia } from "@/data/cities";
-import { commonInterests } from "@/data/intrests";
 import { indianLanguages } from "@/data/languages";
-import { Topprofessions } from "@/data/professions";
 import { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 
@@ -22,6 +20,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+import { PROFESSIONS } from "@/data/professions";
+import { INTERESTS } from "@/data/intrests";
 
 type Props = {
     open: boolean;
@@ -505,12 +505,12 @@ export default function ReviewReelModal({
                                     </Label>
 
                                     <MultiSelect
-                                        options={commonInterests.map(
+                                        options={INTERESTS.map(
                                             (lang) => ({
                                                 label:
-                                                    lang,
+                                                    lang.label,
                                                 value:
-                                                    lang.toLowerCase(),
+                                                    lang.id,
                                             })
                                         )}
                                         selected={interests}
@@ -548,11 +548,11 @@ export default function ReviewReelModal({
                                     </Label>
 
                                     <MultiSelect
-                                        options={Topprofessions.map(
+                                        options={PROFESSIONS.map(
                                             (p) => ({
-                                                label: p,
+                                                label: p.label,
                                                 value:
-                                                    p.toLowerCase(),
+                                                    p.id,
                                             })
                                         )}
                                         selected={

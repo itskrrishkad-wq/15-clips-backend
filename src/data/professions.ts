@@ -23,6 +23,7 @@ export const Topprofessions = ["All", "Engineer", "Doctor", "Digital Marketer"];
 
 export const PROFESSIONS = [
   // Core
+  { id: "all", label: "All", icon: Target },
   { id: "student", label: "Student", icon: Target },
   { id: "freelancer", label: "Freelancer", icon: Briefcase },
   { id: "entrepreneur", label: "Entrepreneur", icon: Rocket },

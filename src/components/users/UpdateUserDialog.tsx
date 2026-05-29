@@ -27,10 +27,10 @@ import { Loader2 } from "lucide-react";
 
 import { topCitiesInIndia } from "@/data/cities";
 import { indianLanguages } from "@/data/languages";
-import { Topprofessions } from "@/data/professions";
 
 import { User } from "@/generated/prisma/client";
-import { commonInterests } from "@/data/intrests";
+import { PROFESSIONS } from "@/data/professions";
+import { INTERESTS } from "@/data/intrests";
 
 type Props = {
     user: User | null;
@@ -251,9 +251,9 @@ const UpdateUserDialog = ({
                             </Label>
 
                             <MultiSelect
-                                options={commonInterests.map((lang) => ({
-                                    label: lang,
-                                    value: lang.toLowerCase(),
+                                options={INTERESTS.map((lang) => ({
+                                    label: lang.label,
+                                    value: lang.id,
                                 }))}
                                 selected={interests}
                                 onChange={setInterests}
@@ -296,12 +296,12 @@ const UpdateUserDialog = ({
                                 </SelectTrigger>
 
                                 <SelectContent>
-                                    {Topprofessions.map((prof) => (
+                                    {PROFESSIONS.map((prof) => (
                                         <SelectItem
-                                            key={prof}
-                                            value={prof}
+                                            key={prof.id}
+                                            value={prof.id}
                                         >
-                                            {prof}
+                                            {prof.label}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -309,7 +309,7 @@ const UpdateUserDialog = ({
                         </div>
 
                         {/* DOB + PHONE */}
-                        <div className="grid grid-cols-2 gap-3">
+                        {/* <div className="grid grid-cols-2 gap-3">
 
 
                             <div>
@@ -327,7 +327,7 @@ const UpdateUserDialog = ({
                                     className="mt-1.5 rounded-2xl"
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* GENDER + ACCOUNT TYPE */}
                         <div className="grid grid-cols-2 gap-3">

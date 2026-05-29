@@ -16,16 +16,16 @@ import {
 } from "@/components/ui/select";
 import { topCitiesInIndia } from "@/data/cities";
 import { indianLanguages } from "@/data/languages";
-import { Topprofessions } from "@/data/professions";
 import { Link2, Loader2, Upload } from "lucide-react";
 import { useState } from "react";
 import { MultiSelect } from "../MultiSelectComp";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { commonInterests } from "@/data/intrests";
 import { ReelStatus } from "@/generated/prisma/enums";
 import { Textarea } from "../ui/textarea";
+import { PROFESSIONS } from "@/data/professions";
+import { INTERESTS } from "@/data/intrests";
 
 const UploadReelDialog = () => {
   const [step, setStep] = useState(1);
@@ -352,9 +352,9 @@ const UploadReelDialog = () => {
               <div>
                 <Label className="text-[12px]">Interests</Label>
                 <MultiSelect
-                  options={commonInterests.map((lang) => ({
-                    label: lang,
-                    value: lang.toLowerCase(),
+                  options={INTERESTS.map((lang) => ({
+                    label: lang.label,
+                    value: lang.id,
                   }))}
                   selected={interests}
                   onChange={setInterests}
@@ -380,9 +380,9 @@ const UploadReelDialog = () => {
               <div>
                 <Label className="text-[12px]">Professions</Label>
                 <MultiSelect
-                  options={Topprofessions.map((prof) => ({
-                    label: prof,
-                    value: prof.toLowerCase(),
+                  options={PROFESSIONS.map((prof) => ({
+                    label: prof.label,
+                    value: prof.id,
                   }))}
                   selected={professions}
                   onChange={setProfessions}

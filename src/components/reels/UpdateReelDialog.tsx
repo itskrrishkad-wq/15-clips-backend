@@ -21,11 +21,11 @@ import { Reel } from "@/generated/prisma/client";
 import { ReelStatus } from "@/generated/prisma/enums";
 
 import { topCitiesInIndia } from "@/data/cities";
-import { commonInterests } from "@/data/intrests";
 import { indianLanguages } from "@/data/languages";
 import { PROFESSIONS } from "@/data/professions";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+import { INTERESTS } from "@/data/intrests";
 
 type Props = {
   open: boolean;
@@ -738,11 +738,11 @@ const UpdateReelDialog = ({
                   </p>
 
                   <MultiSelect
-                    options={commonInterests.map(
+                    options={INTERESTS.map(
                       (i) => ({
-                        label: i,
+                        label: i.label,
                         value:
-                          i.toLowerCase(),
+                          i.id,
                       })
                     )}
                     selected={

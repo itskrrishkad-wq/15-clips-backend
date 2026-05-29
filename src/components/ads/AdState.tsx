@@ -282,6 +282,57 @@ export default function AdStatPage({ id }: { id: string }) {
 
         const highestCtrCity = cityCtrData[0];
 
+
+        // =========================================
+        // LANGUAGE CTR
+        // =========================================
+
+        const languageMap = new Map<
+            string,
+            {
+                language: string;
+                views: number;
+                clicks: number;
+            }
+        >();
+
+        adEvents.forEach((event) => {
+            const languages =
+                event.languages && event.languages.length > 0
+                    ? event.languages
+                    : ["Unknown"];
+
+            languages.forEach((language) => {
+                if (!languageMap.has(language)) {
+                    languageMap.set(language, {
+                        language,
+                        views: 0,
+                        clicks: 0,
+                    });
+                }
+
+                const item = languageMap.get(language)!;
+
+                if (event.eventType === "VIEW") {
+                    item.views += 1;
+                }
+
+                if (event.eventType === "CLICK") {
+                    item.clicks += 1;
+                }
+            });
+        });
+
+        const languageCtrData = Array.from(languageMap.values())
+            .map((l) => ({
+                language: l.language,
+                impressions: l.views,
+                ctr: l.views
+                    ? Number(((l.clicks / l.views) * 100).toFixed(2))
+                    : 0,
+            }))
+            .sort((a, b) => b.ctr - a.ctr);
+
         return {
             impressions,
             totalClicks,
@@ -292,6 +343,7 @@ export default function AdStatPage({ id }: { id: string }) {
             genderCtrData,
             ageCtrData,
             cityCtrData,
+            languageCtrData,
 
             highestCtrCity,
         };
@@ -860,6 +912,114 @@ export default function AdStatPage({ id }: { id: string }) {
                             </div>
                         )}
                     </div>
+
+                    {/* LANGUAGE */}
+                    {analytics.languageCtrData && <div className="rounded-3xl border border-border/40 bg-card p-4 shadow-card sm:p-5">
+                        <div className="mb-5 flex items-center gap-2">
+                            <Globe className="h-4 w-4 text-primary" />
+
+                            <div>
+                                <h3 className="text-sm font-semibold">
+                                    CTR by Language
+                                </h3>
+
+                                <p className="mt-0.5 text-[12px] text-muted-foreground">
+                                    Best performing languages
+                                </p>
+                            </div>
+                        </div>
+
+                        <ResponsiveContainer width="100%" height={280}>
+                            <BarChart
+                                data={analytics.languageCtrData}
+                                barSize={36}
+                            >
+                                <CartesianGrid
+                                    strokeDasharray="3 3"
+                                    stroke="hsl(var(--border) / 0.5)"
+                                    vertical={false}
+                                />
+
+                                <XAxis
+                                    dataKey="language"
+                                    axisLine={false}
+                                    tickLine={false}
+                                />
+
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                />
+
+                                <Tooltip contentStyle={tooltipStyle} />
+
+                                <Bar
+                                    dataKey="ctr"
+                                    radius={[10, 10, 0, 0]}
+                                >
+                                    {analytics.languageCtrData.map((_, i) => (
+                                        <Cell
+                                            key={i}
+                                            fill={
+                                                [
+                                                    "#8B5CF6",
+                                                    "#10B981",
+                                                    "#F59E0B",
+                                                    "#3B82F6",
+                                                    "#EF4444",
+                                                ][i % 5]
+                                            }
+                                        />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+
+                        <div className="mt-4 space-y-3">
+                            {analytics.languageCtrData.map((lang, i) => (
+                                <div
+                                    key={lang.language}
+                                    className="flex items-center justify-between rounded-2xl border border-border/40 p-3"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className="h-3 w-3 rounded-full"
+                                            style={{
+                                                background:
+                                                    [
+                                                        "#8B5CF6",
+                                                        "#10B981",
+                                                        "#F59E0B",
+                                                        "#3B82F6",
+                                                        "#EF4444",
+                                                    ][i % 5],
+                                            }}
+                                        />
+
+                                        <div>
+                                            <p className="text-sm font-medium">
+                                                {lang.language}
+                                            </p>
+
+                                            <p className="text-xs text-muted-foreground">
+                                                {lang.impressions.toLocaleString()} impressions
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-right">
+                                        <p className="text-lg font-bold">
+                                            {lang.ctr}%
+                                        </p>
+
+                                        <p className="text-[11px] text-muted-foreground">
+                                            CTR
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>}
                 </div>
             </div>
             <ConfirmAdStatusDialog

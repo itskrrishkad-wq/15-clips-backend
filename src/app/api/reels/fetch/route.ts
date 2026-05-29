@@ -1,4 +1,3 @@
-import { commonInterests } from "@/data/intrests";
 import { NextRequest, NextResponse } from "next/server";
 
 export const indianLanguages: string[] = ["English", "Marathi"];

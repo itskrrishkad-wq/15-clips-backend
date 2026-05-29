@@ -21,10 +21,11 @@ import {
 } from "@/components/ui/select";
 import { Loader2, Upload } from "lucide-react";
 import { topCitiesInIndia } from "@/data/cities";
-import { Topprofessions } from "@/data/professions";
 import { AdType } from "@/generated/prisma/enums";
 import { Ad } from "@/generated/prisma/client";
 import { indianLanguages } from "@/data/languages";
+import { PROFESSIONS } from "@/data/professions";
+import { INTERESTS } from "@/data/intrests";
 
 // type Ad = {
 //     id: string;
@@ -301,20 +302,10 @@ const UpdateAdDialog = ({
                                 </Label>
 
                                 <MultiSelect
-                                    options={[
-                                        {
-                                            label: "Tech",
-                                            value: "tech",
-                                        },
-                                        {
-                                            label: "Fashion",
-                                            value: "fashion",
-                                        },
-                                        {
-                                            label: "Sports",
-                                            value: "sports",
-                                        },
-                                    ]}
+                                    options={INTERESTS.map((lang) => ({
+                                        label: lang.label,
+                                        value: lang.id,
+                                    }))}
                                     selected={interests}
                                     onChange={setInterests}
                                     placeholder="Select interests"
@@ -363,11 +354,11 @@ const UpdateAdDialog = ({
                                 </Label>
 
                                 <MultiSelect
-                                    options={Topprofessions.map(
+                                    options={PROFESSIONS.map(
                                         (prof) => ({
-                                            label: prof,
+                                            label: prof.label,
                                             value:
-                                                prof.toLowerCase(),
+                                                prof.id,
                                         })
                                     )}
                                     selected={professions}
@@ -392,15 +383,15 @@ const UpdateAdDialog = ({
                                         </SelectTrigger>
 
                                         <SelectContent>
-                                            <SelectItem value="All">
+                                            <SelectItem value="all">
                                                 All
                                             </SelectItem>
 
-                                            <SelectItem value="Male">
+                                            <SelectItem value="male">
                                                 Male
                                             </SelectItem>
 
-                                            <SelectItem value="Female">
+                                            <SelectItem value="female">
                                                 Female
                                             </SelectItem>
                                         </SelectContent>
