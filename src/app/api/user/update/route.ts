@@ -83,7 +83,7 @@ export async function PUT(req: NextRequest) {
         location,
         gender,
         dailyTimeSpent: dailyTimeSpent ? dailyTimeSpent : user.dailyTimeSpent,
-        dob: dob ? dob : user.dob,
+        dob: dob ? new Date(dob) : user.dob,
         languages: languages ? languages : user.languages,
       },
     });
