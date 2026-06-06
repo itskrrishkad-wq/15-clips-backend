@@ -1,4 +1,5 @@
 "use client";
+import { ModeToggle } from "@/components/dark/ModeToggle";
 import { Button } from "@/components/ui/button";
 import { LogOutIcon, Menu } from "lucide-react";
 import { useState } from "react";
@@ -68,16 +69,20 @@ export function TopNavbar({ onMenuToggle }: TopNavbarProps) {
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full gradient-destructive ring-2 ring-card" />
         </Button> */}
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-9 w-max sm:h-10 sm:w-max rounded-xl hover:bg-secondary"
-          onClick={handleLogOut}
-          disabled={loggingout}
-        >
-          <LogOutIcon className="h-[18px] w-[18px] text-muted-foreground mr-1.5" />
-          <span>{loggingout ? "Logging Out" : "Log out"}</span>
-        </Button>
+        <div className="w-full flex items-center justify-center gap-5">
+          <ModeToggle />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-max sm:h-10 sm:w-max rounded-xl hover:bg-secondary"
+            onClick={handleLogOut}
+            disabled={loggingout}
+          >
+            <LogOutIcon className="h-[18px] w-[18px] text-muted-foreground mr-1.5" />
+            <span>{loggingout ? "Logging Out" : "Log out"}</span>
+          </Button>
+
+        </div>
       </div>
     </header>
   );

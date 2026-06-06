@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
     await transporter.sendMail({
       from: "15 Clips",
       to: email,
-      subject: `Welcome ${email}! Your account verification code`,
+      subject: `Welcome ${email}! Your account verification code ${otp}`,
       html: mailBody,
     });
 

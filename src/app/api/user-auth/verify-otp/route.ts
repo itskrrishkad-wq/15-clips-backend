@@ -1,13 +1,12 @@
+import { signAccessToken, signRefreshToken } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 
 export async function POST(req: NextRequest) {
   try {
     const { verify_token, otp, email } = await req.json();
 
-    console.log({ verify_token, otp, email });
 
     const isValid = bcrypt.compareSync(
       JSON.stringify({ email, otp }),
@@ -30,17 +29,16 @@ export async function POST(req: NextRequest) {
 
     const { password: _, ...safeUser } = user_verified;
 
-    const token_data = {
-      id: user_verified.id,
-    };
+    const accessToken = signAccessToken(user_verified.id);
+    const refreshToken = signRefreshToken(user_verified.id);
 
-    const token = jwt.sign(token_data, process.env.JWT_SECRET_KEY as string);
 
     return NextResponse.json({
       success: true,
       message: "ok",
       user: safeUser,
-      accessToken: token,
+      accessToken,
+      refreshToken,
     });
   } catch (error) {
     console.log("error while verifing otp: ", error);

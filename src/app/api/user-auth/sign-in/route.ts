@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { signAccessToken, signRefreshToken } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,13 +39,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Create JWT
-    const token = jwt.sign(
-      { id: user.id },
-      process.env.JWT_SECRET_KEY as string,
-      {
-        expiresIn: "7d",
-      },
-    );
+
+    const accessToken = signAccessToken(user.id);
+    const refreshToken = signRefreshToken(user.id);
+
+    console.log({ refreshToken, accessToken });
 
     const { password: _, ...safeUser } = user;
 
@@ -52,7 +51,8 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Login successful",
-        accessToken: token,
+        accessToken,
+        refreshToken,
         user: safeUser,
       },
       { status: 200 },

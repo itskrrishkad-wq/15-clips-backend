@@ -1,8 +1,9 @@
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { verifyAccessToken } from "@/lib/auth";
 
-interface CustomJWTPayload extends JwtPayload {
+export interface CustomJWTPayload extends JwtPayload {
   id: string;
 }
 
@@ -19,22 +20,35 @@ export async function PUT(req: NextRequest) {
       dailyTimeSpent,
       email,
       interests,
-      accessToken,
     } = await req.json();
+    const authHeader = req.headers.get("authorization");
 
-    if (!accessToken) {
-      return NextResponse.json(
-        { success: false, message: "missing token" },
-        { status: 400 },
+    if (!authHeader) {
+      return Response.json(
+        {
+          success: false,
+          message: "No authorization header",
+        },
+        { status: 401 },
       );
     }
 
-    const token_data = jwt.verify(
-      accessToken,
-      process.env.JWT_SECRET_KEY as string,
-    ) as CustomJWTPayload;
+    const accessToken = authHeader.replace("Bearer ", "");
 
-    if (!token_data.id) {
+    console.log({ accessToken });
+
+    if (!accessToken) {
+      return NextResponse.json({
+        success: false,
+        message: "missing important fields",
+      });
+    }
+
+    const decoded = verifyAccessToken(accessToken);
+
+    console.log({ decoded });
+
+    if (!decoded.id) {
       return NextResponse.json({ success: false, message: "token expired" });
     }
 
@@ -50,7 +64,7 @@ export async function PUT(req: NextRequest) {
       accessToken,
     });
 
-    const user = await prisma.user.findFirst({ where: { id: token_data.id } });
+    const user = await prisma.user.findFirst({ where: { id: decoded.id } });
 
     if (!user) {
       return NextResponse.json({ success: false, message: "user not found" });
@@ -106,6 +120,27 @@ export async function PUT(req: NextRequest) {
     });
   } catch (error) {
     console.log("error while updating user: ", error);
+     if (error instanceof jwt.TokenExpiredError) {
+      return Response.json(
+        {
+          success: false,
+          code: "TOKEN_EXPIRED",
+          message: "Access token expired",
+        },
+        { status: 401 }
+      );
+    }
+
+    if (error instanceof jwt.JsonWebTokenError) {
+      return Response.json(
+        {
+          success: false,
+          code: "INVALID_TOKEN",
+          message: "Invalid token",
+        },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       {
         success: false,

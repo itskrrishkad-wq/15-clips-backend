@@ -81,22 +81,33 @@ function SourceCard({
     return (
         <div
             className="
-        group
-        relative
-        overflow-hidden
-        rounded-[28px]
-        border border-white/[0.06]
-        bg-white
-        p-5
-        transition-all duration-300
-        hover:-translate-y-0.5
-        hover:border-white/[0.12]
-        w-full
-      "
+    group
+    relative
+    overflow-hidden
+    rounded-[28px]
+    border
+    border-border
+    bg-card
+    text-card-foreground
+    p-5
+    shadow-sm
+    transition-all
+    duration-300
+    hover:-translate-y-0.5
+    hover:shadow-md
+    hover:border-border/80
+    w-full
+  "
         >
 
             {/* subtle glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_45%)] pointer-events-none" />
+            <div
+                className="
+    absolute inset-0 pointer-events-none
+    bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.05),transparent_45%)]
+    dark:bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.03),transparent_45%)]
+  "
+            />
 
             {/* top section */}
             <div className="flex items-center justify-between">
@@ -125,11 +136,11 @@ function SourceCard({
 
                     {/* title */}
                     <div className="min-w-0 flex-1">
-                        <h3 className="truncate text-[15px] font-semibold">
+                        <h3 className="truncate text-sm font-semibold">
                             {title}
                         </h3>
 
-                        <p className="mt-1 text-[12px] text-zinc-500">
+                        <p className="mt-1 text-xs text-muted-foreground">
                             Content Source
                         </p>
                     </div>
@@ -256,19 +267,27 @@ export default function SourcesPage() {
                             >
                                 <div
                                     className="
-      relative overflow-hidden
-      rounded-3xl
-      border border-zinc-100
-      bg-zinc-950/5
-      p-5
-      transition-all duration-300
-      hover:border-zinc-1-0
-      hover:bg-zinc-900/5
-    "
+    relative overflow-hidden
+    rounded-3xl
+    border
+    border-border
+    bg-muted/30
+    p-5
+    transition-all
+    duration-300
+    hover:bg-muted/50
+  "
                                 >
                                     {/* glow */}
-                                    <div className="absolute inset-0 bg-gradient-to-br from-white/3 via-transparent to-transparent pointer-events-none" />
-
+                                    <div
+                                        className="
+    absolute inset-0 pointer-events-none
+    bg-gradient-to-br
+    from-white/[0.02]
+    via-transparent
+    to-transparent
+  "
+                                    />
                                     {/* TOP */}
                                     <div className="relative flex items-start justify-between gap-4">
                                         <div className="min-w-0 flex-1">
@@ -290,8 +309,18 @@ export default function SourcesPage() {
                                             </h2>
                                         </div>
 
-                                        <div className="shrink-0 rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-100 px-3 py-1.5">
-                                            <p className="text-[10px] font-medium text-zinc-700">
+                                        <div
+                                            className="
+    shrink-0
+    rounded-xl
+    border
+    border-border
+    bg-background
+    px-3
+    py-1.5
+  "
+                                        >
+                                            <p className="text-[10px] font-medium text-muted-foreground">
                                                 {source.language}
                                             </p>
                                         </div>
@@ -308,17 +337,19 @@ export default function SourcesPage() {
                                                 <div
                                                     key={category}
                                                     className="
-              rounded-full
-        border border-zinc-200
-        bg-zinc-50
-        px-3 py-1.5
-        text-[11px]
-        font-medium
-        text-zinc-700
-        transition-all duration-200
-        hover:border-zinc-300
-        hover:bg-zinc-100
-            "
+    rounded-full
+    border
+    border-border
+    bg-muted/50
+    px-3
+    py-1.5
+    text-[11px]
+    font-medium
+    text-foreground
+    transition-all
+    duration-200
+    hover:bg-muted
+  "
                                                 >
                                                     {category}
                                                 </div>

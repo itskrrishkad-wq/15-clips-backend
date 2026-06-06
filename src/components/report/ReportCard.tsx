@@ -72,35 +72,35 @@ const reasonConfig: Record<
     label: "Spam",
     icon: <Sparkles className="size-4" />,
     color:
-      "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+      "border-yellow-500/20 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
   },
 
   INAPPROPRIATE: {
     label: "Inappropriate",
     icon: <AlertTriangle className="size-4" />,
     color:
-      "bg-pink-500/10 text-pink-400 border-pink-500/20",
+      "border-pink-500/20 bg-pink-500/10 text-pink-600 dark:text-pink-400",
   },
 
   VIOLENCE: {
     label: "Violence",
     icon: <ShieldAlert className="size-4" />,
     color:
-      "bg-red-500/10 text-red-400 border-red-500/20",
+      "border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400",
   },
 
   COPYRIGHT: {
     label: "Copyright",
     icon: <Copyright className="size-4" />,
     color:
-      "bg-blue-500/10 text-blue-400 border-blue-500/20",
+      "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400",
   },
 
   OTHER: {
     label: "Other",
     icon: <MessageSquareText className="size-4" />,
     color:
-      "bg-zinc-500/10 text-zinc-300 border-zinc-500/20",
+      "border-border bg-muted text-muted-foreground",
   },
 };
 
@@ -128,12 +128,12 @@ function CopyableId({
   };
 
   return (
-    <div className="flex items-center gap-2 text-[11px] text-zinc-500">
-      <span className="font-medium text-zinc-900">
+    <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+      <span className="font-medium text-foreground">
         {label}:
       </span>
 
-      <code className="max-w-[120px] truncate rounded-md bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-zinc-700">
+      <code className="max-w-[120px] truncate rounded-md border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-foreground">
         {value}
       </code>
 
@@ -203,13 +203,13 @@ export default function ReportCard({
 
   return (
     <>
-      <Card className="overflow-hidden border-white/10 bg-secondary py-0 text-foreground">
+      <Card className="overflow-hidden py-0 border bg-card text-card-foreground shadow-sm">
         <div className="flex flex-col gap-4 p-4">
           {/* TOP */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
               {/* THUMBNAIL */}
-              <div className="relative h-14 w-14 overflow-hidden rounded-xl bg-white/5 shrink-0">
+              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border bg-muted">
                 {report.reel.thumbnailUrl ? (
                   <img
                     src={report.reel.thumbnailUrl}
@@ -217,7 +217,7 @@ export default function ReportCard({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-white/5 text-xs text-zinc-500">
+                  <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
                     No Image
                   </div>
                 )}
@@ -225,9 +225,9 @@ export default function ReportCard({
 
               {/* META */}
               <div className="space-y-2">
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-muted-foreground">
                   Reported by{" "}
-                  <span className="font-medium text-zinc-800">
+                  <span className="font-medium text-foreground">
                     {report.user.username ||
                       report.user.name ||
                       "Unknown User"}
@@ -238,7 +238,7 @@ export default function ReportCard({
 
 
                 {/* TIME */}
-                <div className="flex items-center gap-1 text-xs text-zinc-500">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Clock3 className="size-3.5" />
 
                   {formatDistanceToNow(
@@ -300,12 +300,12 @@ export default function ReportCard({
 
           {/* NOTE */}
           {report.note && (
-            <div className="rounded-xl border border-white/5 bg-white/[0.03] p-3">
-              <p className="mb-1 text-xs font-medium text-zinc-800">
+            <div className="rounded-xl border bg-muted/50 p-3">
+              <p className="mb-1 text-xs font-medium text-foreground">
                 Additional Note
               </p>
 
-              <p className="text-sm leading-relaxed text-zinc-900">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 {report.note}
               </p>
             </div>

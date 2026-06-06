@@ -16,12 +16,12 @@ export default function ReportsPage() {
 
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
-            <div className="mx-auto max-w-7xl px-4 py-6 md:px-6">
+        <div className="min-h-screen text-foreground">
+            <div className="mx-auto w-full ">
                 <div className="mb-6 flex items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight">
-                            Reports
+                            Reports (<span>{reports.length}</span>)
                         </h1>
 
                         <p className="mt-1 text-sm text-zinc-400">
@@ -29,12 +29,12 @@ export default function ReportsPage() {
                         </p>
                     </div>
 
-                    <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2">
+                    {/* <div className="rounded-xl border border-white/10  bg-card px-4 py-2">
                         <p className="text-xs text-zinc-400">Total Reports</p>
                         <p className="text-lg font-semibold">
                             {reports.length}
                         </p>
-                    </div>
+                    </div> */}
                 </div>
 
                 {reports.length === 0 ? (
