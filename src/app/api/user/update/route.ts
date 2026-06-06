@@ -87,6 +87,12 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    const normalizedLanguages = languages
+      ? Array.isArray(languages)
+        ? languages
+        : [languages]
+      : user.languages;
+
     const update_user = await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -100,7 +106,7 @@ export async function PUT(req: NextRequest) {
           ? parseInt(dailyTimeSpent)
           : user.dailyTimeSpent,
         dob: dob ? new Date(dob) : user.dob,
-        languages: languages ? [languages] : user.languages,
+        languages: normalizedLanguages,
       },
     });
 
@@ -120,14 +126,14 @@ export async function PUT(req: NextRequest) {
     });
   } catch (error) {
     console.log("error while updating user: ", error);
-     if (error instanceof jwt.TokenExpiredError) {
+    if (error instanceof jwt.TokenExpiredError) {
       return Response.json(
         {
           success: false,
           code: "TOKEN_EXPIRED",
           message: "Access token expired",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -138,7 +144,7 @@ export async function PUT(req: NextRequest) {
           code: "INVALID_TOKEN",
           message: "Invalid token",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
     return NextResponse.json(

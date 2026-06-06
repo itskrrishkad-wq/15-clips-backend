@@ -43,7 +43,7 @@ export default function SettingsPage() {
           </div>
           <Separator className="my-4" />
           <div>
-            <Label className="text-[12px]">Max ads per session</Label>
+            <Label className="text-[12px]">Number of Reels before ads</Label>
             <Input
               type="number"
               defaultValue="3"

@@ -1,8 +1,7 @@
-import prisma from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { signAccessToken, signRefreshToken } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import bcrypt from "bcrypt";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,7 +38,6 @@ export async function POST(req: NextRequest) {
     }
 
     // Create JWT
-
     const accessToken = signAccessToken(user.id);
     const refreshToken = signRefreshToken(user.id);
 
