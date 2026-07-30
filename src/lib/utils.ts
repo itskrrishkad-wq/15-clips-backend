@@ -3,6 +3,9 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { jwtVerify } from "jose";
 
+const TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN!;
+const IG_BUSINESS_ID = process.env.INSTAGRAM_BUSINESS_ID!;
+
 const API_KEY = process.env.YOUTUBE_DATA_API_V3!;
 
 export function cn(...inputs: ClassValue[]) {
@@ -38,4 +41,40 @@ export async function getChannelId(
     thumbnail: res.items?.[0]?.snippet?.thumbnails?.default?.url,
     channel: res.items?.[0]?.snippet?.customUrl,
   };
+}
+
+export async function getIgAccont(
+  username: string,
+): Promise<{ channelId: string; thumbnail: string; channel: string }> {
+  try {
+    const fields =
+      `business_discovery.username(${username})` +
+      `{id,username,name,profile_picture_url}`;
+
+    const url =
+      `https://graph.facebook.com/v23.0/${IG_BUSINESS_ID}` +
+      `?fields=${encodeURIComponent(fields)}` +
+      `&access_token=${TOKEN}`;
+
+    const res = await fetch(url);
+
+    console.log({ res });
+
+    if (!res.ok) {
+      console.error(`Failed to fetch ${username}`);
+
+      return { channel: "", channelId: "", thumbnail: "" };
+    }
+
+    const data = await res.json();
+
+    return {
+      channelId: data.business_discovery?.id,
+      thumbnail: data.business_discovery?.profile_picture_url,
+      channel: data.business_discovery?.username,
+    };
+  } catch (error) {
+    console.log(`error sourcing ig: `, username, " : ", error);
+    return { channel: "", channelId: "", thumbnail: "" };
+  }
 }

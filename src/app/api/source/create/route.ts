@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { getChannelId } from "@/lib/utils";
+import { getChannelId, getIgAccont } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+
     const UPPERCASE_SOURCE = source.toUpperCase();
 
     if (UPPERCASE_SOURCE === "YOUTUBE") {
@@ -31,6 +32,45 @@ export async function POST(req: NextRequest) {
       }
 
       console.log({ channelId, thumbnail, channel });
+
+      const create_source = await prisma.source.upsert({
+        where: { channelId },
+        update: {
+          channelName: channel,
+          language,
+          source: UPPERCASE_SOURCE,
+          categories,
+          profileImg: thumbnail,
+        },
+        create: {
+          channelId,
+          channelName: channel,
+          language,
+          source: UPPERCASE_SOURCE,
+          categories,
+          profileImg: thumbnail,
+        },
+      });
+
+      return NextResponse.json(
+        {
+          success: true,
+          message: "ok",
+          data: create_source,
+        },
+        { status: 200 },
+      );
+    }
+
+    if (UPPERCASE_SOURCE === "INSTAGRAM") {
+      const { channelId, thumbnail, channel } = await getIgAccont(channelName);
+
+      if (!channelId) {
+        return NextResponse.json(
+          { success: false, message: "id not found" },
+          { status: 404 },
+        );
+      }
 
       const create_source = await prisma.source.upsert({
         where: { channelId },

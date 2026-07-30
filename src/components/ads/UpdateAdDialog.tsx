@@ -26,6 +26,7 @@ import { Ad } from "@/generated/prisma/client";
 import { indianLanguages } from "@/data/languages";
 import { PROFESSIONS } from "@/data/professions";
 import { INTERESTS } from "@/data/intrests";
+import { useAdStore } from "@/zustand/adStore";
 
 // type Ad = {
 //     id: string;
@@ -58,6 +59,7 @@ const UpdateAdDialog = ({
     onOpenChange,
     setUpdateAd
 }: Props) => {
+    const { updateAd } = useAdStore()
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
 
@@ -148,7 +150,8 @@ const UpdateAdDialog = ({
                 endAt,
             };
 
-            formData.append("ad_info", JSON.stringify(payload));
+            console.log({ gender })
+            formData.append("ads_info", JSON.stringify(payload));
 
             if (file) {
                 formData.append("file", file);
@@ -169,6 +172,7 @@ const UpdateAdDialog = ({
 
             console.log("Ad updated:", data.data);
 
+            updateAd(data.data)
             onOpenChange(false);
 
         } catch (error) {

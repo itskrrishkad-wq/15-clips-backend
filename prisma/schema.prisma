@@ -90,7 +90,7 @@ model Reel {
   likeCount Int @default(0)
 
   sourceViews Int? @default(0)
-  sourceLikee Int? @default(0)
+  sourceLikes Int? @default(0)
 
   createdAt   DateTime  @default(now())
   publishedAt DateTime?

@@ -14,6 +14,8 @@ export type FetchReel = {
     channelId: string;
     publishedAt: string;
     tag?: string[];
+    viewCount: number;
+    likeCount: number;
 };
 
 // ISO duration -> seconds
@@ -93,10 +95,10 @@ export async function fetchNewsYoutube(
             .map((id) => id.trim())
             .join(",")
 
-        console.log(ids);
+        // console.log(ids);
         // 3️⃣ Fetch metadata
         const videoRes = await fetch(
-            `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&id=${ids}&key=${API_KEY}`
+            `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics&id=${ids}&key=${API_KEY}`
         ).then((res) => res.json());
 
         const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
@@ -107,7 +109,7 @@ export async function fetchNewsYoutube(
 
         // 4️⃣ Build reels
         const reels: FetchReel[] = videoRes.items
-            .map((video: any) => {
+            .map((video: any, i: number) => {
                 const meta = flatVideos.find(
                     (v) => v.videoId === video.id
                 );
@@ -171,6 +173,9 @@ export async function fetchNewsYoutube(
                         video.snippet.publishedAt,
                     tag:
                         video.snippet.tags || [],
+                    likeCount: video.statistics.likeCount,
+                    viewCount: video.statistics.viewCount
+
                 };
             })
             .filter(Boolean) as FetchReel[];

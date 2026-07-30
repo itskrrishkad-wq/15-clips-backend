@@ -1,5 +1,7 @@
 import { ReelStatus } from "@/generated/prisma/client";
 import { categorizeReels } from "@/lib/categoriesReels";
+import { fetchNewsInstagram } from "@/lib/fetchNewsInstagram2";
+// import { fetchNewsInstagram } from "@/lib/fetchNewsInstagram";
 import { fetchNewsYoutube, FetchReel } from "@/lib/fetchNewsYoutube2";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -39,7 +41,7 @@ type ReviewReelInput = {
   likeCount: number;
 
   sourceViews: number;
-  sourceLikee: number;
+  sourceLikes: number;
   publishedAt: string;
 
   locations: string[];
@@ -68,7 +70,7 @@ export async function GET(req: NextRequest) {
 
     reels = categorizeReels(reels_data);
 
-    const reviewReels: ReviewReelInput[] = reels
+    const reviewYt: ReviewReelInput[] = reels
       .filter((reel) => reel.duration > 0)
       .map((reel) => {
         const matchedSource = sources.find(
@@ -104,14 +106,61 @@ export async function GET(req: NextRequest) {
           saveCount: 0,
           likeCount: 0,
 
-          sourceViews: 0,
-          sourceLikee: 0,
+          sourceViews: reel.viewCount,
+          sourceLikes: reel.likeCount,
 
           locations: [],
           publishedAt: reel.publishedAt,
         };
       });
 
+    const ig_reels_data = await fetchNewsInstagram(sources);
+
+    const reviewIg: ReviewReelInput[] = ig_reels_data
+      .filter((reel) => reel.id)
+      .map((reel) => {
+        const matchedSource = sources.find(
+          (source) => source.channelName === reel.username,
+        );
+
+        return {
+          channel: matchedSource?.channelName ?? reel.username,
+          channelId: reel.username,
+
+          title: "",
+          description: reel.caption,
+
+          duration: 0,
+
+          interests: reel.category,
+
+          languages: [reel.language],
+
+          reelUrl: "",
+
+          source: "INSTAGRAM",
+
+          sourceUrl: reel.permalink,
+
+          professions: [],
+
+          status: "REVIEW",
+
+          thumbnail: reel.thumbnail,
+
+          viewCount: 0,
+          saveCount: 0,
+          likeCount: 0,
+
+          sourceViews: 0,
+          sourceLikes: reel.like_count,
+
+          locations: [],
+          publishedAt: reel.publishedAt,
+        };
+      });
+
+    const reviewReels = [...reviewIg, ...reviewYt];
     const last72Hours = new Date(Date.now() - 72 * 60 * 60 * 1000);
 
     const lastDayReels = await prisma.reel.findMany({
@@ -128,11 +177,21 @@ export async function GET(req: NextRequest) {
       (reel) => !existingIds.has(reel.sourceUrl),
     );
 
-    const create_reels = await prisma.reel.createMany({
-      data: filtered_reels,
+    // const create_reels = await prisma.reel.createMany({
+    //   data: filtered_reels,
+    // });
+
+    console.log({ ig_reels_data: reviewIg.flat().length });
+    console.log({ yt_reels: reviewYt.flat().length });
+    console.log({
+      total: reviewYt.flat().length + reviewIg.flat().length,
+      filtered_reels: filtered_reels.length,
     });
 
-    return NextResponse.json({ success: true, reels: create_reels });
+    return NextResponse.json({
+      success: true,
+      reels: { ig: reviewIg, yt: filtered_reels },
+    });
   } catch (error) {
     console.log("error while testing: ", error);
     return NextResponse.json(

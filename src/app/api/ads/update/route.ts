@@ -37,10 +37,11 @@ export async function PUT(req: NextRequest) {
     const ads_info_string = formData.get("ads_info");
     const file = formData.get("file") as File | null;
 
-    const ads_info: Partial<any> & { id: string } = ads_info_string
+    const ads_info: Partial<Ad> = ads_info_string
       ? JSON.parse(ads_info_string.toString())
       : ({} as any);
 
+    console.log({ads_info_string});
     const {
       title,
       description,
@@ -80,6 +81,21 @@ export async function PUT(req: NextRequest) {
     // ✅ Array validation (only if provided)
     const isValidArray = (arr: any) => Array.isArray(arr) && arr.length > 0;
 
+    console.log({
+      title,
+      description,
+      url,
+      interests,
+      locations,
+      professions,
+      gender,
+      startAt,
+      endAt,
+      status,
+      type,
+      ageMax,
+      ageMin,
+    });
     if (
       (interests !== undefined && !isValidArray(interests)) ||
       (locations !== undefined && !isValidArray(locations)) ||
@@ -117,8 +133,8 @@ export async function PUT(req: NextRequest) {
         ...(description !== undefined && { description }),
         ...(url !== undefined && { url: file ? updatedFileUrl : url }),
         ...(gender !== undefined && { gender }),
-        ...(startAt !== undefined && { startAt }),
-        ...(endAt !== undefined && { endAt }),
+        ...(startAt !== undefined && { startAt: new Date(startAt) }),
+        ...(endAt !== undefined && { endAt: new Date(endAt) }),
         ...(status !== undefined && { status }),
         ...(type !== undefined && { type }),
         ...(ageMax !== undefined && { ageMax }),
